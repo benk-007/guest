@@ -1,0 +1,46 @@
+/**
+ * <p>Copyright (C) Calade Technologies, Inc - All Rights Reserved Unauthorized copying of this
+ * file, via any medium is strictly prohibited Proprietary and confidential
+ */
+package com.smsmode.guest.service;
+
+import com.smsmode.guest.resource.iddocument.IdDocumentGetResource;
+import com.smsmode.guest.resource.iddocument.IdDocumentPatchResource;
+import com.smsmode.guest.resource.iddocument.IdDocumentPostResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
+
+/**
+ * Service interface for IdentificationDocument business operations.
+ *
+ * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
+ * <p>Created 16 Jun 2025</p>
+ */
+public interface IdentificationDocumentService {
+
+    /**
+     * Creates a new identification document for a guest.
+     */
+    ResponseEntity<IdDocumentGetResource> create(String guestId, IdDocumentPostResource idDocumentPostResource);
+
+    /**
+     * Retrieves all identification documents for a guest with pagination.
+     */
+    ResponseEntity<Page<IdDocumentGetResource>> retrieveAllByGuestId(String guestId, Pageable pageable);
+
+    /**
+     * Retrieves an identification document by ID.
+     */
+    ResponseEntity<IdDocumentGetResource> retrieveById(String guestId, String idDocumentId);
+
+    /**
+     * Updates an identification document partially.
+     */
+    ResponseEntity<IdDocumentGetResource> updateById(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource);
+
+    /**
+     * Deletes an identification document by ID.
+     */
+    ResponseEntity<Void> deleteById(String guestId, String idDocumentId);
+}

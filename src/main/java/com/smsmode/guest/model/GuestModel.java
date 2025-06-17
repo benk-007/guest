@@ -6,12 +6,15 @@ package com.smsmode.guest.model;
 
 import com.smsmode.guest.embeddable.AddressEmbeddable;
 import com.smsmode.guest.embeddable.ContactEmbeddable;
-import com.smsmode.guest.enumeration.IdentificationDocumentTypeEnum;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Entity representing a Guest in the PMS system.
@@ -27,33 +30,29 @@ import lombok.Setter;
 @Table(name = "X_GUEST")
 public class GuestModel extends AbstractBaseModel {
 
-    @Column(name = "FIRST_NAME", nullable = false)
     private String firstName;
 
-    @Column(name = "LAST_NAME", nullable = false)
     private String lastName;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "email", column = @Column(name = "CONTACT_EMAIL", nullable = false, unique = true)),
-            @AttributeOverride(name = "mobile", column = @Column(name = "CONTACT_MOBILE", nullable = false))
-    })
     private ContactEmbeddable contact;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "street1", column = @Column(name = "ADDRESS_STREET1")),
-            @AttributeOverride(name = "street2", column = @Column(name = "ADDRESS_STREET2")),
-            @AttributeOverride(name = "postalCode", column = @Column(name = "ADDRESS_POSTAL_CODE")),
-            @AttributeOverride(name = "city", column = @Column(name = "ADDRESS_CITY")),
-            @AttributeOverride(name = "country", column = @Column(name = "ADDRESS_COUNTRY"))
-    })
     private AddressEmbeddable address;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "IDENTIFICATION_DOCUMENT_TYPE")
-    private IdentificationDocumentTypeEnum identificationDocumentType;
+    private LocalDate birthDate;
 
-    @Column(name = "IDENTIFICATION_NUMBER")
-    private String identificationNumber;
+    @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<IdentificationDocumentModel> idDocuments = new ArrayList<>();
+
+    // Helper methods pour gérer la relation bidirectionnelle
+    public void addIdDocument(IdentificationDocumentModel idDocument) {
+        idDocuments.add(idDocument);
+        idDocument.setGuest(this);
+    }
+
+    public void removeIdDocument(IdentificationDocumentModel idDocument) {
+        idDocuments.remove(idDocument);
+        idDocument.setGuest(null);
+    }
 }

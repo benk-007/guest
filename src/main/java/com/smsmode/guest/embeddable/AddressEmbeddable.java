@@ -16,18 +16,13 @@ import lombok.Setter;
 @Embeddable
 public class AddressEmbeddable {
 
-    @Column(name = "STREET1")
     private String street1;
 
-    @Column(name = "STREET2")
     private String street2;
 
-    @Column(name = "POSTAL_CODE")
-    private String postalCode;
+    private String postCode;
 
-    @Column(name = "CITY")
     private String city;
 
-    @Column(name = "COUNTRY")
     private String country;
 }

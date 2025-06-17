@@ -2,9 +2,12 @@ package com.smsmode.guest.resource.guest;
 
 import com.smsmode.guest.embeddable.AddressEmbeddable;
 import com.smsmode.guest.embeddable.ContactEmbeddable;
-import com.smsmode.guest.enumeration.IdentificationDocumentTypeEnum;
+import com.smsmode.guest.resource.iddocument.IdDocumentPostResource;
 import jakarta.validation.Valid;
 import lombok.Data;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class GuestPatchResource {
@@ -17,6 +20,8 @@ public class GuestPatchResource {
     @Valid
     private AddressEmbeddable address;
 
-    private IdentificationDocumentTypeEnum identificationDocumentType;
-    private String identificationNumber;
+    private LocalDate birthDate;
+
+    @Valid
+    private List<IdDocumentPostResource> idDocuments;
 }
