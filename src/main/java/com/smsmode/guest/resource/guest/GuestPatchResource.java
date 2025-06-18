@@ -21,7 +21,4 @@ public class GuestPatchResource {
     private AddressEmbeddable address;
 
     private LocalDate birthDate;
-
-    @Valid
-    private List<IdDocumentPostResource> idDocuments;
 }

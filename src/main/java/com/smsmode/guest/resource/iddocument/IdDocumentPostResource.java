@@ -13,4 +13,5 @@ public class IdDocumentPostResource {
 
     private String documentNumber;
     private LocalDate expirationDate;
+
 }

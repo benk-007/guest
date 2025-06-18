@@ -28,7 +28,4 @@ public class GuestPostResource {
     private AddressEmbeddable address;
 
     private LocalDate birthDate;
-
-    @Valid
-    private List<IdDocumentPostResource> idDocuments;
 }

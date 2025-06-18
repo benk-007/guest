@@ -30,7 +30,6 @@ public abstract class GuestMapper {
     /**
      * Maps GuestPostResource to GuestModel for creation.
      */
-    @Mapping(target = "idDocuments", ignore = true)
     public abstract GuestModel postResourceToModel(GuestPostResource guestPostResource);
 
     /**
@@ -41,7 +40,6 @@ public abstract class GuestMapper {
     /**
      * Maps GuestPatchResource to GuestModel for partial updates.
      */
-    @Mapping(target = "idDocuments", ignore = true)
     public abstract GuestModel patchResourceToModel(GuestPatchResource guestPatchResource, @MappingTarget GuestModel guestModel);
 
     /**
@@ -69,41 +67,5 @@ public abstract class GuestMapper {
     @AfterMapping
     public void afterModelToGetResource(GuestModel guestModel, @MappingTarget GuestGetResource guestGetResource) {
         guestGetResource.setAudit(this.modelToAuditResource(guestModel));
-    }
-
-    /**
-     * Helper method to handle ID documents mapping during creation.
-     */
-    @AfterMapping
-    public void afterPostResourceToModel(GuestPostResource guestPostResource, @MappingTarget GuestModel guestModel) {
-        if (guestPostResource.getIdDocuments() != null) {
-            List<IdentificationDocumentModel> idDocuments = guestPostResource.getIdDocuments().stream()
-                    .map(this::idDocumentPostToModel)
-                    .toList();
-
-            for (IdentificationDocumentModel idDoc : idDocuments) {
-                guestModel.addIdDocument(idDoc);
-            }
-        }
-    }
-
-    /**
-     * Helper method to handle ID documents mapping during update.
-     */
-    @AfterMapping
-    public void afterPatchResourceToModel(GuestPatchResource guestPatchResource, @MappingTarget GuestModel guestModel) {
-        if (guestPatchResource.getIdDocuments() != null) {
-            // Clear existing documents
-            guestModel.getIdDocuments().clear();
-
-            // Add new documents
-            List<IdentificationDocumentModel> idDocuments = guestPatchResource.getIdDocuments().stream()
-                    .map(this::idDocumentPostToModel)
-                    .toList();
-
-            for (IdentificationDocumentModel idDoc : idDocuments) {
-                guestModel.addIdDocument(idDoc);
-            }
-        }
     }
 }

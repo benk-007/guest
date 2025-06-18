@@ -41,20 +41,4 @@ public class GuestModel extends AbstractBaseModel {
     private AddressEmbeddable address;
 
     private LocalDate birthDate;
-
-    //TODO: remove this relationShip make it unidirectional. The guest model doesn't have to know the id_documents keep the guest relation in the document model
-    @OneToMany(mappedBy = "guest", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<IdentificationDocumentModel> idDocuments = new ArrayList<>();
-
-    //TODO: remove these two below helper methods we don't need them since we will not use the bidirectional relationship anymore
-    // Helper methods pour gérer la relation bidirectionnelle
-    public void addIdDocument(IdentificationDocumentModel idDocument) {
-        idDocuments.add(idDocument);
-        idDocument.setGuest(this);
-    }
-
-    public void removeIdDocument(IdentificationDocumentModel idDocument) {
-        idDocuments.remove(idDocument);
-        idDocument.setGuest(null);
-    }
 }

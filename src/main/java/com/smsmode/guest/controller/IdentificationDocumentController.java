@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
  * <p>Created 16 Jun 2025</p>
  */
-@RequestMapping("/guests/{guestId}/id-documents")
+@RequestMapping("/id-documents")
 public interface IdentificationDocumentController {
 
     /**

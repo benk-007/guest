@@ -17,6 +17,5 @@ public class GuestGetResource {
     private ContactEmbeddable contact;
     private AddressEmbeddable address;
     private LocalDate birthDate;
-    private List<IdDocumentGetResource> idDocuments;
     private AuditGetResource audit;
 }

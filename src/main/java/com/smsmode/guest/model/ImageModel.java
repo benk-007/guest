@@ -4,34 +4,30 @@
  */
 package com.smsmode.guest.model;
 
-import com.smsmode.guest.enumeration.IdentificationDocumentTypeEnum;
 import com.smsmode.guest.model.base.AbstractBaseModel;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 /**
- * Entity representing an identification document for a guest.
+ * TODO: add your documentation
  *
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
- * <p>Created 16 Jun 2025</p>
+ * <p>Created 19 May 2025</p>
  */
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "X_ID_DOCUMENT")
-public class IdentificationDocumentModel extends AbstractBaseModel {
-    @Enumerated(EnumType.STRING)
-    private IdentificationDocumentTypeEnum type;
-
-    private String documentNumber;
-
-    private LocalDate expirationDate;
+@Table(name = "X_IMAGE")
+public class ImageModel extends AbstractBaseModel {
+    private String fileName;
+    private boolean cover = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private GuestModel guest;
+    private IdentificationDocumentModel idDocument;
 }
