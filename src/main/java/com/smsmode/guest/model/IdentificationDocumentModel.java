@@ -23,8 +23,12 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
+//TODO: change the name of the table to X_ID_DOCUMENT
 @Table(name = "X_IDENTIFICATION_DOCUMENT")
 public class IdentificationDocumentModel extends AbstractBaseModel {
+
+    //TODO: add new model image like the one we have in unit service and make the image linked to an ID Document,
+    //TODO: expose a controller to allow users to upload an ID DOCUMENT with an image
 
     @Enumerated(EnumType.STRING)
     private IdentificationDocumentTypeEnum type;
