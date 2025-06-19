@@ -27,7 +27,7 @@ public interface IdentificationDocumentController {
      */
     @PostMapping
     ResponseEntity<IdDocumentGetResource> createIdDocument(
-            @PathVariable("guestId") String guestId,
+            @RequestParam("guestId") String guestId,
             @RequestBody @Valid IdDocumentPostResource idDocumentPostResource);
 
     /**
@@ -35,7 +35,7 @@ public interface IdentificationDocumentController {
      */
     @GetMapping
     ResponseEntity<Page<IdDocumentGetResource>> getAllIdDocuments(
-            @PathVariable("guestId") String guestId,
+            @RequestParam("guestId") String guestId,
             Pageable pageable);
 
     /**
@@ -43,7 +43,7 @@ public interface IdentificationDocumentController {
      */
     @GetMapping("/{idDocumentId}")
     ResponseEntity<IdDocumentGetResource> getIdDocumentById(
-            @PathVariable("guestId") String guestId,
+            @RequestParam("guestId") String guestId,
             @PathVariable("idDocumentId") String idDocumentId);
 
     /**
@@ -51,7 +51,7 @@ public interface IdentificationDocumentController {
      */
     @PatchMapping("/{idDocumentId}")
     ResponseEntity<IdDocumentGetResource> updateIdDocument(
-            @PathVariable("guestId") String guestId,
+            @RequestParam("guestId") String guestId,
             @PathVariable("idDocumentId") String idDocumentId,
             @RequestBody @Valid IdDocumentPatchResource idDocumentPatchResource);
 
@@ -60,6 +60,6 @@ public interface IdentificationDocumentController {
      */
     @DeleteMapping("/{idDocumentId}")
     ResponseEntity<Void> deleteIdDocument(
-            @PathVariable("guestId") String guestId,
+            @RequestParam("guestId") String guestId,
             @PathVariable("idDocumentId") String idDocumentId);
 }

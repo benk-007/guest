@@ -4,14 +4,24 @@
  */
 package com.smsmode.guest.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smsmode.guest.dao.service.GuestDaoService;
+import com.smsmode.guest.dao.service.IdentificationDocumentDaoService;
+import com.smsmode.guest.dao.service.ImageDaoService;
+import com.smsmode.guest.exception.InternalServerException;
+import com.smsmode.guest.exception.enumeration.InternalServerExceptionTitleEnum;
+import com.smsmode.guest.model.IdentificationDocumentModel;
 import com.smsmode.guest.dao.specification.GuestSpecification;
 import com.smsmode.guest.mapper.GuestMapper;
 import com.smsmode.guest.model.GuestModel;
+import com.smsmode.guest.model.ImageModel;
 import com.smsmode.guest.resource.guest.GuestGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
 import com.smsmode.guest.resource.guest.GuestPostResource;
 import com.smsmode.guest.service.GuestService;
+import com.smsmode.guest.service.StorageService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,7 +29,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 
 /**
@@ -35,15 +47,67 @@ public class GuestServiceImpl implements GuestService {
 
     private final GuestDaoService guestDaoService;
     private final GuestMapper guestMapper;
+    private final IdentificationDocumentDaoService identificationDocumentDaoService;
+
+    private final ImageDaoService imageDaoService;
+    private final StorageService storageService;
+    private final ObjectMapper objectMapper;
 
     @Override
-    public ResponseEntity<GuestGetResource> create(GuestPostResource guestPostResource) {
+    @Transactional
+    public ResponseEntity<GuestGetResource> create(String guestJson, MultipartFile[] documentImages) {
+        try {
+            GuestPostResource guestPostResource = objectMapper.readValue(guestJson, GuestPostResource.class);
 
-        GuestModel guestModel = guestMapper.postResourceToModel(guestPostResource);
+            GuestModel guestModel = guestMapper.postResourceToModel(guestPostResource);
 
-        guestModel = guestDaoService.save(guestModel);
+            guestModel = guestDaoService.save(guestModel);
 
-        return ResponseEntity.created(URI.create("")).body(guestMapper.modelToGetResource(guestModel));
+            IdentificationDocumentModel idDocumentModel = null;
+            if (guestPostResource.getIdDocument() != null) {
+
+                idDocumentModel = guestMapper.idDocumentPostToModel(guestPostResource.getIdDocument());
+                idDocumentModel.setGuest(guestModel);
+                idDocumentModel = identificationDocumentDaoService.save(idDocumentModel);
+
+            }
+
+            if (documentImages != null && documentImages.length > 0 && idDocumentModel != null) {
+                for (int i = 0; i < documentImages.length; i++) {
+                    MultipartFile file = documentImages[i];
+                    if (!file.isEmpty()) {
+
+                        ImageModel imageModel = new ImageModel();
+                        imageModel.setFileName(file.getOriginalFilename());
+                        imageModel.setIdDocument(idDocumentModel);
+                        imageModel.setCover(i == 0); // Premier image = cover
+                        imageModel = imageDaoService.save(imageModel);
+
+                        String imagePath = storageService.generateIdDocumentImagePath(imageModel);
+                        String savedFileName = storageService.storeFile(imagePath, file.getInputStream());
+
+                        if (savedFileName == null) {
+                            throw new InternalServerException(
+                                    InternalServerExceptionTitleEnum.FILE_UPLOAD,
+                                    "Failed to save document image: " + file.getOriginalFilename()
+                            );
+                        }
+                    }
+                }
+            } else if (documentImages != null && documentImages.length > 0 && idDocumentModel == null) {
+                log.warn("Document images provided but no idDocument created. Images will be ignored.");
+            }
+
+            return ResponseEntity.created(URI.create("")).body(guestMapper.modelToGetResource(guestModel));
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Invalid guest data format", e);
+        } catch (IOException e) {
+            throw new InternalServerException(
+                    InternalServerExceptionTitleEnum.FILE_UPLOAD,
+                    "Failed to process document images"
+            );
+        }
     }
 
     @Override

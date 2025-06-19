@@ -9,7 +9,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 public class GuestPostResource {
@@ -28,4 +27,7 @@ public class GuestPostResource {
     private AddressEmbeddable address;
 
     private LocalDate birthDate;
+
+    @Valid
+    private IdDocumentPostResource idDocument;
 }

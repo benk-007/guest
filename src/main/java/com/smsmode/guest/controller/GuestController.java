@@ -2,12 +2,12 @@ package com.smsmode.guest.controller;
 
 import com.smsmode.guest.resource.guest.GuestGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
-import com.smsmode.guest.resource.guest.GuestPostResource;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * REST Controller for Guest operations.
@@ -19,10 +19,14 @@ import org.springframework.web.bind.annotation.*;
 public interface GuestController {
 
     /**
-     * Creates a new guest.
+     * Creates a new guest with optional documents and images.
+     * Handles all cases: guest alone, guest+idDocument, guest+idDocument+images
      */
-    @PostMapping
-    ResponseEntity<GuestGetResource> createGuest(@RequestBody @Valid GuestPostResource guestPostResource);
+    @PostMapping(consumes = "multipart/form-data")
+    ResponseEntity<GuestGetResource> createGuest(
+            @RequestParam("guestJson") String guestJson,
+            @RequestParam(value = "documentImage", required = false) MultipartFile[] documentImages);
+
 
     /**
      * Retrieves all guests with optional search and pagination.

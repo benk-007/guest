@@ -3,13 +3,13 @@ package com.smsmode.guest.controller.impl;
 import com.smsmode.guest.controller.GuestController;
 import com.smsmode.guest.resource.guest.GuestGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
-import com.smsmode.guest.resource.guest.GuestPostResource;
 import com.smsmode.guest.service.GuestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Implementation of GuestController.
@@ -24,8 +24,8 @@ public class GuestControllerImpl implements GuestController {
     private final GuestService guestService;
 
     @Override
-    public ResponseEntity<GuestGetResource> createGuest(GuestPostResource guestPostResource) {
-        return guestService.create(guestPostResource);
+    public ResponseEntity<GuestGetResource> createGuest(String guestJson, MultipartFile[] documentImages) {
+        return guestService.create(guestJson, documentImages);
     }
 
     @Override

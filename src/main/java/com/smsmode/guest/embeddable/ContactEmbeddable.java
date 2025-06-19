@@ -5,6 +5,8 @@
 package com.smsmode.guest.embeddable;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +20,9 @@ import lombok.Setter;
 @Setter
 @Embeddable
 public class ContactEmbeddable {
+    @NotBlank(message = "Mobile number is required")
     private String mobile;
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
     private String email;
 }
