@@ -29,5 +29,5 @@ public class GuestPostResource {
     private LocalDate birthDate;
 
     @Valid
-    private IdDocumentPostResource idDocument;
+    private IdDocumentPostResource identityDocument;
 }

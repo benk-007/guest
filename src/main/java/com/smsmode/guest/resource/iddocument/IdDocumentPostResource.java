@@ -1,6 +1,7 @@
 package com.smsmode.guest.resource.iddocument;
 
 import com.smsmode.guest.enumeration.IdentificationDocumentTypeEnum;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -10,8 +11,8 @@ import java.time.LocalDate;
 public class IdDocumentPostResource {
     @NotNull
     private IdentificationDocumentTypeEnum type;
-
+    @NotBlank
     private String documentNumber;
+    @NotBlank
     private LocalDate expirationDate;
-
 }

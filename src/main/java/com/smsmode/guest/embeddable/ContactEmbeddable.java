@@ -20,7 +20,6 @@ import lombok.Setter;
 @Setter
 @Embeddable
 public class ContactEmbeddable {
-    @NotBlank(message = "Mobile number is required")
     private String mobile;
     @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")

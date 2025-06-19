@@ -2,6 +2,7 @@ package com.smsmode.guest.controller;
 
 import com.smsmode.guest.resource.guest.GuestGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
+import com.smsmode.guest.resource.guest.GuestPostResource;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,8 +25,10 @@ public interface GuestController {
      */
     @PostMapping(consumes = "multipart/form-data")
     ResponseEntity<GuestGetResource> createGuest(
-            @RequestParam("guestJson") String guestJson,
-            @RequestParam(value = "documentImage", required = false) MultipartFile[] documentImages);
+            //TODO: rename it to payload
+            @RequestPart("guestJson") @Valid GuestPostResource guestPostResource,
+            //TODO: rename it to file
+            @RequestPart(value = "documentImage", required = false) MultipartFile[] documentImages);
 
 
     /**

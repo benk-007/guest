@@ -9,12 +9,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smsmode.guest.dao.service.GuestDaoService;
 import com.smsmode.guest.dao.service.IdentificationDocumentDaoService;
 import com.smsmode.guest.dao.service.ImageDaoService;
+import com.smsmode.guest.dao.specification.GuestSpecification;
 import com.smsmode.guest.exception.InternalServerException;
 import com.smsmode.guest.exception.enumeration.InternalServerExceptionTitleEnum;
-import com.smsmode.guest.model.IdentificationDocumentModel;
-import com.smsmode.guest.dao.specification.GuestSpecification;
 import com.smsmode.guest.mapper.GuestMapper;
 import com.smsmode.guest.model.GuestModel;
+import com.smsmode.guest.model.IdentificationDocumentModel;
 import com.smsmode.guest.model.ImageModel;
 import com.smsmode.guest.resource.guest.GuestGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
@@ -29,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -55,18 +56,18 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     @Transactional
-    public ResponseEntity<GuestGetResource> create(String guestJson, MultipartFile[] documentImages) {
+    public ResponseEntity<GuestGetResource> create(GuestPostResource guestPostResource, MultipartFile[] documentImages) {
         try {
-            GuestPostResource guestPostResource = objectMapper.readValue(guestJson, GuestPostResource.class);
+//            GuestPostResource guestPostResource = objectMapper.readValue(guestJson, GuestPostResource.class);
 
             GuestModel guestModel = guestMapper.postResourceToModel(guestPostResource);
 
             guestModel = guestDaoService.save(guestModel);
 
             IdentificationDocumentModel idDocumentModel = null;
-            if (guestPostResource.getIdDocument() != null) {
+            if (!ObjectUtils.isEmpty(guestPostResource.getIdentityDocument())) {
 
-                idDocumentModel = guestMapper.idDocumentPostToModel(guestPostResource.getIdDocument());
+                idDocumentModel = guestMapper.idDocumentPostToModel(guestPostResource.getIdentityDocument());
                 idDocumentModel.setGuest(guestModel);
                 idDocumentModel = identificationDocumentDaoService.save(idDocumentModel);
 

@@ -24,10 +24,13 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "X_IMAGE")
+//TODO: name table X_DOCUMENT
 public class ImageModel extends AbstractBaseModel {
     private String fileName;
+    //TODO: remove cover
     private boolean cover = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    //TODO: add join column annotation and name the column IDENTITY_DOCUMENT_ID
     private IdentificationDocumentModel idDocument;
 }

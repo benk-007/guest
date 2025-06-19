@@ -24,6 +24,8 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "X_ID_DOCUMENT")
+//TODO: name the table X_IDENTITY_DOCUMENT
+//name the model IdentityDocumentModel
 public class IdentificationDocumentModel extends AbstractBaseModel {
     @Enumerated(EnumType.STRING)
     private IdentificationDocumentTypeEnum type;

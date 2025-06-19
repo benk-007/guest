@@ -2,6 +2,7 @@ package com.smsmode.guest.service;
 
 import com.smsmode.guest.resource.guest.GuestGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
+import com.smsmode.guest.resource.guest.GuestPostResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public interface GuestService {
     /**
      * Creates a new guest.
      */
-    ResponseEntity<GuestGetResource> create(String guestJson, MultipartFile[] documentImages);
+    ResponseEntity<GuestGetResource> create(GuestPostResource guestJson, MultipartFile[] documentImages);
     /**
      * Retrieves all guests with pagination and optional search.
      */

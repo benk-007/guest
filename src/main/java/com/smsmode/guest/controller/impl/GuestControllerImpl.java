@@ -3,6 +3,7 @@ package com.smsmode.guest.controller.impl;
 import com.smsmode.guest.controller.GuestController;
 import com.smsmode.guest.resource.guest.GuestGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
+import com.smsmode.guest.resource.guest.GuestPostResource;
 import com.smsmode.guest.service.GuestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,8 +25,8 @@ public class GuestControllerImpl implements GuestController {
     private final GuestService guestService;
 
     @Override
-    public ResponseEntity<GuestGetResource> createGuest(String guestJson, MultipartFile[] documentImages) {
-        return guestService.create(guestJson, documentImages);
+    public ResponseEntity<GuestGetResource> createGuest(GuestPostResource guestPostResource, MultipartFile[] documentImages) {
+        return guestService.create(guestPostResource, documentImages);
     }
 
     @Override
