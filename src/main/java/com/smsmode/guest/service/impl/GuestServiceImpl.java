@@ -128,8 +128,13 @@ public class GuestServiceImpl implements GuestService {
     @Override
     public ResponseEntity<GuestGetResource> updateById(String guestId, GuestPatchResource guestPatchResource) {
 
+        // 1. Récupérer le guest existant
         GuestModel existingGuest = guestDaoService.findOneBy(GuestSpecification.withIdEqual(guestId));
+
+        // 2. Appliquer les modifications partielles
         GuestModel updatedGuest = guestMapper.patchResourceToModel(guestPatchResource, existingGuest);
+
+        // 3. Sauvegarder les modifications
         updatedGuest = guestDaoService.save(updatedGuest);
 
         return ResponseEntity.ok(guestMapper.modelToGetResource(updatedGuest));
