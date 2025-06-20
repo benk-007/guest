@@ -23,7 +23,7 @@ import org.mapstruct.*;
         componentModel = "spring",
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {IdentificationDocumentMapper.class})
+        uses = {IdentityDocumentMapper.class})
 public abstract class GuestMapper {
 
     /**
