@@ -36,4 +36,9 @@ public interface GuestService {
      */
     ResponseEntity<GuestGetResource> updateById(String guestId, GuestPatchResource guestPatchResource);
 
+    /**
+     * Deletes a guest by ID.
+     */
+    ResponseEntity<Void> deleteById(String guestId);
+
 }

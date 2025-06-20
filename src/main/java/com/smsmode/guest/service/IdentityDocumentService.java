@@ -39,4 +39,9 @@ public interface IdentityDocumentService {
      * Updates an identification document partially.
      */
     ResponseEntity<IdDocumentGetResource> updateById(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource);
+
+    /**
+    Deletes identity document and associated images.
+     */
+    ResponseEntity<Void> deleteByIdWithImages(String guestId, String idDocumentId);
 }

@@ -49,4 +49,12 @@ public interface GuestController {
     ResponseEntity<GuestGetResource> updateGuest(
             @PathVariable("guestId") String guestId,
             @RequestBody @Valid GuestPatchResource guestPatchResource);
+
+    /**
+     * Deletes a guest.
+     */
+    @DeleteMapping("/{guestId}")
+    ResponseEntity<Void> deleteGuest(@PathVariable("guestId") String guestId);
+
+
 }

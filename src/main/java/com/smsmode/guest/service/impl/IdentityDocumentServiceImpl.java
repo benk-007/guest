@@ -150,4 +150,43 @@ public class IdentityDocumentServiceImpl implements IdentityDocumentService {
 
         return ResponseEntity.ok(identityDocumentMapper.modelToGetResource(updatedIdDocument));
     }
+
+    /**
+     Suppression avec images associées
+     */
+    @Override
+    @Transactional
+    public ResponseEntity<Void> deleteByIdWithImages(String guestId, String idDocumentId) {
+
+        Specification<IdentityDocumentModel> spec = Specification.where(
+                        IdentityDocumentSpecification.withId(idDocumentId))
+                .and(IdentityDocumentSpecification.withGuestId(guestId));
+
+        if (!identityDocumentDaoService.existsBy(spec)) {
+            throw new ResourceNotFoundException(
+                    ResourceNotFoundExceptionTitleEnum.ID_DOCUMENT_NOT_FOUND,
+                    "Identity document not found with ID: " + idDocumentId);
+        }
+
+        // 1. Récupérer l'identity document
+        IdentityDocumentModel identityDocument = identityDocumentDaoService.findOneBy(spec);
+
+        // 2. Supprimer toutes les images associées
+        Specification<DocumentModel> imageSpec = DocumentSpecification.withIdentityDocumentId(idDocumentId);
+        Page<DocumentModel> images = documentDaoService.findAllBy(imageSpec, Pageable.unpaged());
+
+        for (DocumentModel image : images) {
+            // Supprimer le fichier physique
+            String imagePath = storageService.generateDocumentPath(image);
+            storageService.deleteFile(imagePath);
+
+            // Supprimer l'enregistrement
+            documentDaoService.deleteBy(DocumentSpecification.withId(image.getId()));
+        }
+
+        // 3. Supprimer l'identity document
+        identityDocumentDaoService.deleteBy(spec);
+
+        return ResponseEntity.noContent().build();
+    }
 }

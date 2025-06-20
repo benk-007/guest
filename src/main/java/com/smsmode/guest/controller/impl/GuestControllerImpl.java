@@ -45,4 +45,9 @@ public class GuestControllerImpl implements GuestController {
     public ResponseEntity<GuestGetResource> updateGuest(String guestId, GuestPatchResource guestPatchResource) {
         return guestService.updateById(guestId, guestPatchResource);
     }
+
+    @Override
+    public ResponseEntity<Void> deleteGuest(String guestId) {
+        return guestService.deleteById(guestId);
+    }
 }

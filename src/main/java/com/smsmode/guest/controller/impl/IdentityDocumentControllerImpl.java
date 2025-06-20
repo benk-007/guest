@@ -50,4 +50,12 @@ public class IdentityDocumentControllerImpl implements IdentityDocumentControlle
     public ResponseEntity<IdDocumentGetResource> updateIdDocument(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource) {
         return identityDocumentService.updateById(guestId, idDocumentId, idDocumentPatchResource);
     }
+
+    /**
+     Suppression avec images
+     */
+    @Override
+    public ResponseEntity<Void> deleteIdDocument(String guestId, String idDocumentId) {
+        return identityDocumentService.deleteByIdWithImages(guestId, idDocumentId);
+    }
 }

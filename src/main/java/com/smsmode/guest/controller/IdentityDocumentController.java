@@ -58,4 +58,12 @@ public interface IdentityDocumentController {
             @RequestParam("guestId") String guestId,
             @PathVariable("idDocumentId") String idDocumentId,
             @RequestBody @Valid IdDocumentPatchResource idDocumentPatchResource);
+
+    /**
+     Deletes an identity document and its associated images.
+     */
+    @DeleteMapping("/{idDocumentId}")
+    ResponseEntity<Void> deleteIdDocument(
+            @RequestParam("guestId") String guestId,
+            @PathVariable("idDocumentId") String idDocumentId);
 }
