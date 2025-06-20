@@ -37,10 +37,7 @@ public interface GuestController {
             @RequestParam(value = "search", required = false) String search,
             Pageable pageable);
 
-    @PostMapping("/test")
-    ResponseEntity<String> testEndpoint(@RequestPart("payload") String payload);
-    /**
-     * Retrieves a guest by ID.
+    /* Retrieves a guest by ID.
      */
     @GetMapping("/{guestId}")
     ResponseEntity<GuestGetResource> getGuestById(@PathVariable("guestId") String guestId);

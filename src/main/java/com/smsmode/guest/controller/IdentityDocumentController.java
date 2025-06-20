@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * REST Controller for IdentificationDocument operations.
@@ -20,23 +21,26 @@ import org.springframework.web.bind.annotation.*;
  * <p>Created 16 Jun 2025</p>
  */
 @RequestMapping("/id-documents")
-public interface IdentificationDocumentController {
+public interface IdentityDocumentController {
 
     /**
-     * Creates a new identification document for a guest.
+     * Creates a new identity document with optional images (multipart support).
      */
-    @PostMapping
+    @PostMapping(consumes = "multipart/form-data")
     ResponseEntity<IdDocumentGetResource> createIdDocument(
             @RequestParam("guestId") String guestId,
-            @RequestBody @Valid IdDocumentPostResource idDocumentPostResource);
+            @RequestPart("payload") @Valid IdDocumentPostResource idDocumentPostResource,
+            @RequestPart(value = "file", required = false) MultipartFile[] documentImages);
 
     /**
-     * Retrieves all identification documents for a guest with pagination.
+     Retrieves all identity documents for a guest with pagination and search.
      */
     @GetMapping
     ResponseEntity<Page<IdDocumentGetResource>> getAllIdDocuments(
             @RequestParam("guestId") String guestId,
+            @RequestParam(value = "search", required = false) String search,
             Pageable pageable);
+
 
     /**
      * Retrieves an identification document by ID.
@@ -47,19 +51,11 @@ public interface IdentificationDocumentController {
             @PathVariable("idDocumentId") String idDocumentId);
 
     /**
-     * Updates an identification document partially.
+     * Updates an identity document partially (without images).
      */
     @PatchMapping("/{idDocumentId}")
     ResponseEntity<IdDocumentGetResource> updateIdDocument(
             @RequestParam("guestId") String guestId,
             @PathVariable("idDocumentId") String idDocumentId,
             @RequestBody @Valid IdDocumentPatchResource idDocumentPatchResource);
-
-    /**
-     * Deletes an identification document.
-     */
-    @DeleteMapping("/{idDocumentId}")
-    ResponseEntity<Void> deleteIdDocument(
-            @RequestParam("guestId") String guestId,
-            @PathVariable("idDocumentId") String idDocumentId);
 }

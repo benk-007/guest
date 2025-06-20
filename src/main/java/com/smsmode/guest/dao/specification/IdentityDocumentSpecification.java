@@ -17,7 +17,7 @@ import org.springframework.data.jpa.domain.Specification;
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
  * <p>Created 16 Jun 2025</p>
  */
-public class IdentificationDocumentSpecification {
+public class IdentityDocumentSpecification {
 
     public static Specification<IdentityDocumentModel> withId(String idDocumentId) {
         return (root, query, criteriaBuilder) ->
@@ -28,6 +28,19 @@ public class IdentificationDocumentSpecification {
         return (root, query, criteriaBuilder) -> {
             Join<IdentityDocumentModel, GuestModel> join = root.join(IdentityDocumentModel_.guest);
             return criteriaBuilder.equal(join.get(GuestModel_.id), guestId);
+        };
+    }
+
+    public static Specification<IdentityDocumentModel> withSearch(String search) {
+        return (root, query, criteriaBuilder) -> {
+            if (search == null || search.trim().isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            String likePattern = "%" + search.toLowerCase() + "%";
+            return criteriaBuilder.or(
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get(IdentityDocumentModel_.documentNumber)), likePattern),
+                    criteriaBuilder.like(criteriaBuilder.lower(root.get(IdentityDocumentModel_.type).as(String.class)), likePattern)
+            );
         };
     }
 }

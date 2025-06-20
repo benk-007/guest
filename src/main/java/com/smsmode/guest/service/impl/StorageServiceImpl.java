@@ -28,7 +28,7 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class StorageServiceImpl implements StorageService {
 
-    @Value("${file.upload.id-document-image}")
+    @Value("${file.upload.identity-document-image}")
     private String imageUploadPath;
 
     public String storeFile(String path, InputStream inputStream) {
@@ -36,12 +36,10 @@ public class StorageServiceImpl implements StorageService {
         try {
             if (!Files.exists(originalFilePath)) {
                 Files.createDirectories(originalFilePath.getParent());
-                log.info("Directory structure is created ...");
             }
             Files.copy(inputStream, originalFilePath, StandardCopyOption.REPLACE_EXISTING);
             return originalFilePath.getFileName().toString();
         } catch (IOException e) {
-            log.warn("An error occurred while saving file. Error details: {}", e.getMessage());
             return null;
         }
     }
@@ -63,8 +61,10 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String generateDocumentPath(DocumentModel image) {
-        String extension = image.getFileName().substring(image.getFileName().lastIndexOf("."));
-        return this.imageUploadPath.replace(":idDocumentId", image.getIdentityDocument().getId()).concat("/").concat(image.getId()).concat(extension);
+    public String generateDocumentPath(DocumentModel document) {
+        String extension = document.getFileName().substring(document.getFileName().lastIndexOf("."));
+        return this.imageUploadPath
+                .replace(":identityDocumentId", document.getIdentityDocument().getId())
+                .concat("/").concat(document.getId()).concat(extension);
     }
 }

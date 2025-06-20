@@ -4,11 +4,12 @@
  */
 package com.smsmode.guest.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.smsmode.guest.dao.service.GuestDaoService;
 import com.smsmode.guest.dao.service.IdentityDocumentDaoService;
 import com.smsmode.guest.dao.service.DocumentDaoService;
+import com.smsmode.guest.dao.specification.DocumentSpecification;
 import com.smsmode.guest.dao.specification.GuestSpecification;
+import com.smsmode.guest.dao.specification.IdentityDocumentSpecification;
 import com.smsmode.guest.exception.InternalServerException;
 import com.smsmode.guest.exception.enumeration.InternalServerExceptionTitleEnum;
 import com.smsmode.guest.mapper.GuestMapper;
@@ -138,16 +139,5 @@ public class GuestServiceImpl implements GuestService {
         updatedGuest = guestDaoService.save(updatedGuest);
 
         return ResponseEntity.ok(guestMapper.modelToGetResource(updatedGuest));
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteById(String guestId) {
-
-        if (guestDaoService.existsById(guestId)) {
-            guestDaoService.deleteById(guestId);
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.notFound().build();
     }
 }

@@ -13,4 +13,4 @@ server:
 file:
   upload:
     root: ${user.home}/Projects/xStay/upload-folder
-    id-document-image: ${file.upload.root}/id-documents/:idDocumentId/images
+    identity-document-image: ${file.upload.root}/identity-documents/:identityDocumentId/images

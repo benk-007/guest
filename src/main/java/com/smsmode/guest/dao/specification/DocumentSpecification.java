@@ -17,16 +17,16 @@ import org.springframework.data.jpa.domain.Specification;
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
  * <p>Created 20 May 2025</p>
  */
-public class ImageSpecification {
-    public static Specification<DocumentModel> withIdDocumentId(String idDocumentId) {
+public class DocumentSpecification {
+    public static Specification<DocumentModel> withIdentityDocumentId(String identityDocumentId) {
         return (root, query, criteriaBuilder) -> {
             Join<DocumentModel, IdentityDocumentModel> join = root.join(DocumentModel_.identityDocument);
-            return criteriaBuilder.equal(join.get(IdentityDocumentModel_.id), idDocumentId);
+            return criteriaBuilder.equal(join.get(IdentityDocumentModel_.id), identityDocumentId);
         };
     }
 
-    public static Specification<DocumentModel> withId(String imageId) {
+    public static Specification<DocumentModel> withId(String documentId) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get(DocumentModel_.id), imageId);
+                criteriaBuilder.equal(root.get(DocumentModel_.id), documentId);
     }
 }

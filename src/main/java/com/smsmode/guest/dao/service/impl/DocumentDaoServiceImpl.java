@@ -4,7 +4,7 @@
  */
 package com.smsmode.guest.dao.service.impl;
 
-import com.smsmode.guest.dao.repository.ImageRepository;
+import com.smsmode.guest.dao.repository.DocumentRepository;
 import com.smsmode.guest.dao.service.DocumentDaoService;
 import com.smsmode.guest.exception.ResourceNotFoundException;
 import com.smsmode.guest.exception.enumeration.ResourceNotFoundExceptionTitleEnum;
@@ -27,31 +27,31 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DocumentDaoServiceImpl implements DocumentDaoService {
 
-    private final ImageRepository imageRepository;
+    private final DocumentRepository documentRepository;
 
     @Override
     public boolean existsBy(Specification<DocumentModel> specification) {
-        return imageRepository.exists(specification);
+        return documentRepository.exists(specification);
     }
 
     @Override
     public DocumentModel save(DocumentModel image) {
-        return imageRepository.save(image);
+        return documentRepository.save(image);
     }
 
     @Override
     public void deleteBy(Specification<DocumentModel> specification) {
-        imageRepository.delete(specification);
+        documentRepository.delete(specification);
     }
 
     @Override
     public Page<DocumentModel> findAllBy(Specification<DocumentModel> specification, Pageable pageable) {
-        return imageRepository.findAll(specification, pageable);
+        return documentRepository.findAll(specification, pageable);
     }
 
     @Override
     public DocumentModel findOneBy(Specification<DocumentModel> specification) {
-        return imageRepository.findOne(specification).orElseThrow(
+        return documentRepository.findOne(specification).orElseThrow(
                 () -> {
                     log.debug("Couldn't find any image with the specified criteria");
                     return new ResourceNotFoundException(

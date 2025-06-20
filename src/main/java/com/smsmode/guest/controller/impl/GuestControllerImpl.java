@@ -31,10 +31,6 @@ public class GuestControllerImpl implements GuestController {
         return guestService.create(guestPostResource, documentImages);
     }
 
-    @PostMapping("/test")
-    public ResponseEntity<String> testEndpoint(@RequestPart("payload") String payload) {
-        return ResponseEntity.ok("Test réussi: " + payload); // ← ERREUR ICI
-    }
     @Override
     public ResponseEntity<Page<GuestGetResource>> getAllGuests(String search, Pageable pageable) {
         return guestService.retrieveAllByPage(search, pageable);

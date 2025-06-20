@@ -4,16 +4,17 @@
  */
 package com.smsmode.guest.controller.impl;
 
-import com.smsmode.guest.controller.IdentificationDocumentController;
+import com.smsmode.guest.controller.IdentityDocumentController;
 import com.smsmode.guest.resource.iddocument.IdDocumentGetResource;
 import com.smsmode.guest.resource.iddocument.IdDocumentPatchResource;
 import com.smsmode.guest.resource.iddocument.IdDocumentPostResource;
-import com.smsmode.guest.service.IdentificationDocumentService;
+import com.smsmode.guest.service.IdentityDocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Implementation of IdentificationDocumentController.
@@ -23,32 +24,30 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-public class IdentificationDocumentControllerImpl implements IdentificationDocumentController {
+public class IdentityDocumentControllerImpl implements IdentityDocumentController {
 
-    private final IdentificationDocumentService identificationDocumentService;
+    private final IdentityDocumentService identityDocumentService;
 
+    /**
+      Support multipart pour création avec images
+     */
     @Override
-    public ResponseEntity<IdDocumentGetResource> createIdDocument(String guestId, IdDocumentPostResource idDocumentPostResource) {
-        return identificationDocumentService.create(guestId, idDocumentPostResource);
+    public ResponseEntity<IdDocumentGetResource> createIdDocument(String guestId, IdDocumentPostResource idDocumentPostResource, MultipartFile[] documentImages) {
+        return identityDocumentService.create(guestId, idDocumentPostResource, documentImages);
     }
 
     @Override
-    public ResponseEntity<Page<IdDocumentGetResource>> getAllIdDocuments(String guestId, Pageable pageable) {
-        return identificationDocumentService.retrieveAllByGuestId(guestId, pageable);
+    public ResponseEntity<Page<IdDocumentGetResource>> getAllIdDocuments(String guestId, String search, Pageable pageable) {
+        return identityDocumentService.retrieveAllByGuestId(guestId, search, pageable);
     }
 
     @Override
     public ResponseEntity<IdDocumentGetResource> getIdDocumentById(String guestId, String idDocumentId) {
-        return identificationDocumentService.retrieveById(guestId, idDocumentId);
+        return identityDocumentService.retrieveById(guestId, idDocumentId);
     }
 
     @Override
     public ResponseEntity<IdDocumentGetResource> updateIdDocument(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource) {
-        return identificationDocumentService.updateById(guestId, idDocumentId, idDocumentPatchResource);
-    }
-
-    @Override
-    public ResponseEntity<Void> deleteIdDocument(String guestId, String idDocumentId) {
-        return identificationDocumentService.deleteById(guestId, idDocumentId);
+        return identityDocumentService.updateById(guestId, idDocumentId, idDocumentPatchResource);
     }
 }

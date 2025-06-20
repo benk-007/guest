@@ -6,8 +6,8 @@ package com.smsmode.guest.service.impl;
 
 import com.smsmode.guest.dao.service.DocumentDaoService;
 import com.smsmode.guest.dao.service.IdentityDocumentDaoService;
-import com.smsmode.guest.dao.specification.ImageSpecification;
-import com.smsmode.guest.dao.specification.IdentificationDocumentSpecification;
+import com.smsmode.guest.dao.specification.DocumentSpecification;
+import com.smsmode.guest.dao.specification.IdentityDocumentSpecification;
 import com.smsmode.guest.exception.InternalServerException;
 import com.smsmode.guest.exception.ResourceNotFoundException;
 import com.smsmode.guest.exception.enumeration.InternalServerExceptionTitleEnum;
@@ -55,14 +55,14 @@ public class IdDocumentImageServiceImpl implements IdDocumentImageService {
 
     @Override
     public ResponseEntity<Page<ImageGetResource>> retrieveImages(String idDocumentId, Pageable pageable) {
-        Page<DocumentModel> imageModels = documentDaoService.findAllBy(ImageSpecification.withIdDocumentId(idDocumentId), pageable);
+        Page<DocumentModel> imageModels = documentDaoService.findAllBy(DocumentSpecification.withIdentityDocumentId(idDocumentId), pageable);
         return ResponseEntity.ok(imageModels.map(imageMapper::modelToImageGetResource));
     }
 
     @Override
     public ResponseEntity<Resource> retrieveImage(String imageId) {
 
-        DocumentModel image = documentDaoService.findOneBy(ImageSpecification.withId(imageId));
+        DocumentModel image = documentDaoService.findOneBy(DocumentSpecification.withId(imageId));
 
         String imagePath = storageService.generateDocumentPath(image);
         File file = new File(imagePath);
@@ -92,7 +92,7 @@ public class IdDocumentImageServiceImpl implements IdDocumentImageService {
     @Override
     public ResponseEntity<ImageGetResource> createImage(String idDocumentId, MultipartFile file) {
 
-        IdentityDocumentModel idDocument = identificationDocumentDaoService.findOneBy(IdentificationDocumentSpecification.withId(idDocumentId));
+        IdentityDocumentModel idDocument = identificationDocumentDaoService.findOneBy(IdentityDocumentSpecification.withId(idDocumentId));
 
         DocumentModel image = new DocumentModel();
         image.setFileName(file.getOriginalFilename());
@@ -105,12 +105,12 @@ public class IdDocumentImageServiceImpl implements IdDocumentImageService {
         try {
             String imageFileName = storageService.storeFile(imagePath, file.getInputStream());
             if (ObjectUtils.isEmpty(imageFileName)) {
-                documentDaoService.deleteBy(ImageSpecification.withId(image.getId()));
+                documentDaoService.deleteBy(DocumentSpecification.withId(image.getId()));
                 throw new InternalServerException(InternalServerExceptionTitleEnum.FILE_UPLOAD, "An unexpected error occurred while saving the image. Please try again later.");
             }
         } catch (IOException e) {
             log.warn("An error occurred when storing image file", e);
-            documentDaoService.deleteBy(ImageSpecification.withId(image.getId()));
+            documentDaoService.deleteBy(DocumentSpecification.withId(image.getId()));
             throw new InternalServerException(InternalServerExceptionTitleEnum.FILE_UPLOAD, "An unexpected error occurred while saving the image. Please try again later.");
         }
         return ResponseEntity.created(URI.create("")).body(imageMapper.modelToImageGetResource(image));
@@ -118,7 +118,7 @@ public class IdDocumentImageServiceImpl implements IdDocumentImageService {
 
     @Override
     public ResponseEntity<ImageGetResource> updateById(String imageId, ImagePatchResource imagePatchResource) {
-        DocumentModel image = documentDaoService.findOneBy(ImageSpecification.withId(imageId));
+        DocumentModel image = documentDaoService.findOneBy(DocumentSpecification.withId(imageId));
 
         image = imageMapper.patchResourceToModel(imagePatchResource, image);
         image = documentDaoService.save(image);
@@ -128,11 +128,11 @@ public class IdDocumentImageServiceImpl implements IdDocumentImageService {
 
     @Override
     public ResponseEntity<Void> removeById(String imageId) {
-        if (documentDaoService.existsBy(ImageSpecification.withId(imageId))) {
-            DocumentModel image = documentDaoService.findOneBy(ImageSpecification.withId(imageId));
+        if (documentDaoService.existsBy(DocumentSpecification.withId(imageId))) {
+            DocumentModel image = documentDaoService.findOneBy(DocumentSpecification.withId(imageId));
             String imagePath = storageService.generateDocumentPath(image);
             storageService.deleteFile(imagePath);
-            documentDaoService.deleteBy(ImageSpecification.withId(imageId));
+            documentDaoService.deleteBy(DocumentSpecification.withId(imageId));
             return ResponseEntity.noContent().build();
         } else {
             throw new ResourceNotFoundException(

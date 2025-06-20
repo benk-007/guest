@@ -16,5 +16,5 @@ import org.springframework.stereotype.Repository;
  * <p>Created 20 May 2025</p>
  */
 @Repository
-public interface ImageRepository extends JpaRepository<DocumentModel, String>, JpaSpecificationExecutor<DocumentModel> {
+public interface DocumentRepository extends JpaRepository<DocumentModel, String>, JpaSpecificationExecutor<DocumentModel> {
 }

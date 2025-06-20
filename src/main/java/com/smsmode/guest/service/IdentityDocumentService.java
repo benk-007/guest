@@ -10,6 +10,7 @@ import com.smsmode.guest.resource.iddocument.IdDocumentPostResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Service interface for IdentificationDocument business operations.
@@ -17,17 +18,17 @@ import org.springframework.http.ResponseEntity;
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
  * <p>Created 16 Jun 2025</p>
  */
-public interface IdentificationDocumentService {
+public interface IdentityDocumentService {
 
     /**
      * Creates a new identification document for a guest.
      */
-    ResponseEntity<IdDocumentGetResource> create(String guestId, IdDocumentPostResource idDocumentPostResource);
+    ResponseEntity<IdDocumentGetResource> create(String guestId, IdDocumentPostResource idDocumentPostResource, MultipartFile[] documentImages);
 
     /**
-     * Retrieves all identification documents for a guest with pagination.
+     * Retrieves all identification documents for a guest with pagination and search support
      */
-    ResponseEntity<Page<IdDocumentGetResource>> retrieveAllByGuestId(String guestId, Pageable pageable);
+    ResponseEntity<Page<IdDocumentGetResource>> retrieveAllByGuestId(String guestId, String search, Pageable pageable);
 
     /**
      * Retrieves an identification document by ID.
@@ -38,9 +39,4 @@ public interface IdentificationDocumentService {
      * Updates an identification document partially.
      */
     ResponseEntity<IdDocumentGetResource> updateById(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource);
-
-    /**
-     * Deletes an identification document by ID.
-     */
-    ResponseEntity<Void> deleteById(String guestId, String idDocumentId);
 }

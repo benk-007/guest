@@ -20,5 +20,5 @@ public interface StorageService {
 
     void deleteFile(String path);
 
-    String generateDocumentPath(DocumentModel image);
+    String generateDocumentPath(DocumentModel document);
 }

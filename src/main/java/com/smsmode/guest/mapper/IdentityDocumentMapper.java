@@ -24,7 +24,7 @@ import org.mapstruct.*;
         componentModel = "spring",
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public abstract class IdentificationDocumentMapper {
+public abstract class IdentityDocumentMapper {
 
     /**
      * Maps IdDocumentPostResource to IdentificationDocumentModel for creation.
