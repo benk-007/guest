@@ -4,7 +4,7 @@
  */
 package com.smsmode.guest.mapper;
 
-import com.smsmode.guest.model.IdentificationDocumentModel;
+import com.smsmode.guest.model.IdentityDocumentModel;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import com.smsmode.guest.resource.common.AuditGetResource;
 import com.smsmode.guest.resource.iddocument.IdDocumentGetResource;
@@ -29,17 +29,17 @@ public abstract class IdentificationDocumentMapper {
     /**
      * Maps IdDocumentPostResource to IdentificationDocumentModel for creation.
      */
-    public abstract IdentificationDocumentModel postResourceToModel(IdDocumentPostResource idDocumentPostResource);
+    public abstract IdentityDocumentModel postResourceToModel(IdDocumentPostResource idDocumentPostResource);
 
     /**
      * Maps IdentificationDocumentModel to IdDocumentGetResource for retrieval.
      */
-    public abstract IdDocumentGetResource modelToGetResource(IdentificationDocumentModel idDocumentModel);
+    public abstract IdDocumentGetResource modelToGetResource(IdentityDocumentModel idDocumentModel);
 
     /**
      * Maps IdDocumentPatchResource to IdentificationDocumentModel for partial updates.
      */
-    public abstract IdentificationDocumentModel patchResourceToModel(IdDocumentPatchResource idDocumentPatchResource, @MappingTarget IdentificationDocumentModel idDocumentModel);
+    public abstract IdentityDocumentModel patchResourceToModel(IdDocumentPatchResource idDocumentPatchResource, @MappingTarget IdentityDocumentModel idDocumentModel);
 
     /**
      * Maps AbstractBaseModel to AuditGetResource for audit information.
@@ -50,7 +50,7 @@ public abstract class IdentificationDocumentMapper {
      * After mapping method to set audit information.
      */
     @AfterMapping
-    public void afterModelToGetResource(IdentificationDocumentModel idDocumentModel, @MappingTarget IdDocumentGetResource idDocumentGetResource) {
+    public void afterModelToGetResource(IdentityDocumentModel idDocumentModel, @MappingTarget IdDocumentGetResource idDocumentGetResource) {
         idDocumentGetResource.setAudit(this.modelToAuditResource(idDocumentModel));
     }
 }

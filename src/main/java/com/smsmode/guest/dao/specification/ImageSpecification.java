@@ -4,10 +4,10 @@
  */
 package com.smsmode.guest.dao.specification;
 
-import com.smsmode.guest.model.ImageModel;
-import com.smsmode.guest.model.ImageModel_;
-import com.smsmode.guest.model.IdentificationDocumentModel;
-import com.smsmode.guest.model.IdentificationDocumentModel_;
+import com.smsmode.guest.model.DocumentModel;
+import com.smsmode.guest.model.DocumentModel_;
+import com.smsmode.guest.model.IdentityDocumentModel;
+import com.smsmode.guest.model.IdentityDocumentModel_;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -18,19 +18,15 @@ import org.springframework.data.jpa.domain.Specification;
  * <p>Created 20 May 2025</p>
  */
 public class ImageSpecification {
-    public static Specification<ImageModel> withIdDocumentId(String idDocumentId) {
+    public static Specification<DocumentModel> withIdDocumentId(String idDocumentId) {
         return (root, query, criteriaBuilder) -> {
-            Join<ImageModel, IdentificationDocumentModel> join = root.join(ImageModel_.idDocument);
-            return criteriaBuilder.equal(join.get(IdentificationDocumentModel_.id), idDocumentId);
+            Join<DocumentModel, IdentityDocumentModel> join = root.join(DocumentModel_.identityDocument);
+            return criteriaBuilder.equal(join.get(IdentityDocumentModel_.id), idDocumentId);
         };
     }
 
-    public static Specification<ImageModel> withId(String imageId) {
+    public static Specification<DocumentModel> withId(String imageId) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get(ImageModel_.id), imageId);
-    }
-
-    public static Specification<ImageModel> withCover(boolean cover) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get(ImageModel_.cover), cover);
+                criteriaBuilder.equal(root.get(DocumentModel_.id), imageId);
     }
 }

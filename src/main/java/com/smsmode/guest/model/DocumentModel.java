@@ -5,10 +5,7 @@
 package com.smsmode.guest.model;
 
 import com.smsmode.guest.model.base.AbstractBaseModel;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,14 +20,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "X_IMAGE")
-//TODO: name table X_DOCUMENT
-public class ImageModel extends AbstractBaseModel {
+@Table(name = "X_DOCUMENT")
+public class DocumentModel extends AbstractBaseModel {
     private String fileName;
-    //TODO: remove cover
-    private boolean cover = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    //TODO: add join column annotation and name the column IDENTITY_DOCUMENT_ID
-    private IdentificationDocumentModel idDocument;
+    @JoinColumn(name = "IDENTITY_DOCUMENT_ID")
+    private IdentityDocumentModel identityDocument;
 }

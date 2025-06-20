@@ -1,10 +1,10 @@
 package com.smsmode.guest.dao.service.impl;
 
 import com.smsmode.guest.dao.repository.IdentificationDocumentRepository;
-import com.smsmode.guest.dao.service.IdentificationDocumentDaoService;
+import com.smsmode.guest.dao.service.IdentityDocumentDaoService;
 import com.smsmode.guest.exception.ResourceNotFoundException;
 import com.smsmode.guest.exception.enumeration.ResourceNotFoundExceptionTitleEnum;
-import com.smsmode.guest.model.IdentificationDocumentModel;
+import com.smsmode.guest.model.IdentityDocumentModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,17 +21,17 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class IdentificationDocumentDaoServiceImpl implements IdentificationDocumentDaoService {
+public class IdentityDocumentDaoServiceImpl implements IdentityDocumentDaoService {
 
     private final IdentificationDocumentRepository idDocumentRepository;
 
     @Override
-    public IdentificationDocumentModel save(IdentificationDocumentModel idDocument) {
+    public IdentityDocumentModel save(IdentityDocumentModel idDocument) {
         return idDocumentRepository.save(idDocument);
     }
 
     @Override
-    public IdentificationDocumentModel findOneBy(Specification<IdentificationDocumentModel> specification) {
+    public IdentityDocumentModel findOneBy(Specification<IdentityDocumentModel> specification) {
         return idDocumentRepository.findOne(specification).orElseThrow(
                 () -> {
                     log.debug("Couldn't find any identification document with the specified criteria");
@@ -42,17 +42,17 @@ public class IdentificationDocumentDaoServiceImpl implements IdentificationDocum
     }
 
     @Override
-    public Page<IdentificationDocumentModel> findAllBy(Specification<IdentificationDocumentModel> specification, Pageable pageable) {
+    public Page<IdentityDocumentModel> findAllBy(Specification<IdentityDocumentModel> specification, Pageable pageable) {
         return idDocumentRepository.findAll(specification, pageable);
     }
 
     @Override
-    public boolean existsBy(Specification<IdentificationDocumentModel> specification) {
+    public boolean existsBy(Specification<IdentityDocumentModel> specification) {
         return idDocumentRepository.exists(specification);
     }
 
     @Override
-    public void deleteBy(Specification<IdentificationDocumentModel> specification) {
+    public void deleteBy(Specification<IdentityDocumentModel> specification) {
         idDocumentRepository.delete(specification);
     }
 }

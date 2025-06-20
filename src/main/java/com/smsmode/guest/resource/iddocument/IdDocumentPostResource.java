@@ -13,6 +13,6 @@ public class IdDocumentPostResource {
     private IdentificationDocumentTypeEnum type;
     @NotBlank
     private String documentNumber;
-    @NotBlank
+    @NotNull
     private LocalDate expirationDate;
 }

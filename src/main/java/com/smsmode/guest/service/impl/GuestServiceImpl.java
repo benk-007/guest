@@ -5,17 +5,16 @@
 package com.smsmode.guest.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smsmode.guest.dao.service.GuestDaoService;
-import com.smsmode.guest.dao.service.IdentificationDocumentDaoService;
-import com.smsmode.guest.dao.service.ImageDaoService;
+import com.smsmode.guest.dao.service.IdentityDocumentDaoService;
+import com.smsmode.guest.dao.service.DocumentDaoService;
 import com.smsmode.guest.dao.specification.GuestSpecification;
 import com.smsmode.guest.exception.InternalServerException;
 import com.smsmode.guest.exception.enumeration.InternalServerExceptionTitleEnum;
 import com.smsmode.guest.mapper.GuestMapper;
 import com.smsmode.guest.model.GuestModel;
-import com.smsmode.guest.model.IdentificationDocumentModel;
-import com.smsmode.guest.model.ImageModel;
+import com.smsmode.guest.model.IdentityDocumentModel;
+import com.smsmode.guest.model.DocumentModel;
 import com.smsmode.guest.resource.guest.GuestGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
 import com.smsmode.guest.resource.guest.GuestPostResource;
@@ -48,43 +47,45 @@ public class GuestServiceImpl implements GuestService {
 
     private final GuestDaoService guestDaoService;
     private final GuestMapper guestMapper;
-    private final IdentificationDocumentDaoService identificationDocumentDaoService;
+    private final IdentityDocumentDaoService identityDocumentDaoService;
 
-    private final ImageDaoService imageDaoService;
+    private final DocumentDaoService documentDaoService;
     private final StorageService storageService;
-    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
     public ResponseEntity<GuestGetResource> create(GuestPostResource guestPostResource, MultipartFile[] documentImages) {
         try {
-//            GuestPostResource guestPostResource = objectMapper.readValue(guestJson, GuestPostResource.class);
-
+            // 1. Créer le guest
             GuestModel guestModel = guestMapper.postResourceToModel(guestPostResource);
-
             guestModel = guestDaoService.save(guestModel);
 
-            IdentificationDocumentModel idDocumentModel = null;
+            // 2. Vérifier avec ObjectUtils.isEmpty
+            IdentityDocumentModel identityDocumentModel = null;
             if (!ObjectUtils.isEmpty(guestPostResource.getIdentityDocument())) {
 
-                idDocumentModel = guestMapper.idDocumentPostToModel(guestPostResource.getIdentityDocument());
-                idDocumentModel.setGuest(guestModel);
-                idDocumentModel = identificationDocumentDaoService.save(idDocumentModel);
+                identityDocumentModel = guestMapper.identityDocumentPostToModel(guestPostResource.getIdentityDocument());
+                identityDocumentModel.setGuest(guestModel);
+                identityDocumentModel = identityDocumentDaoService.save(identityDocumentModel);
 
+            } else {
+                log.debug("No identity document provided for guest: {}", guestModel.getId());
             }
 
-            if (documentImages != null && documentImages.length > 0 && idDocumentModel != null) {
-                for (int i = 0; i < documentImages.length; i++) {
-                    MultipartFile file = documentImages[i];
+            // 3. Traiter les images si fournies ET si identityDocument existe
+            if (documentImages != null && documentImages.length > 0 && identityDocumentModel != null) {
+
+                for (MultipartFile file : documentImages) {
                     if (!file.isEmpty()) {
 
-                        ImageModel imageModel = new ImageModel();
-                        imageModel.setFileName(file.getOriginalFilename());
-                        imageModel.setIdDocument(idDocumentModel);
-                        imageModel.setCover(i == 0); // Premier image = cover
-                        imageModel = imageDaoService.save(imageModel);
+                        // Créer le DocumentModel
+                        DocumentModel documentModel = new DocumentModel();
+                        documentModel.setFileName(file.getOriginalFilename());
+                        documentModel.setIdentityDocument(identityDocumentModel);
+                        documentModel = documentDaoService.save(documentModel);
 
-                        String imagePath = storageService.generateIdDocumentImagePath(imageModel);
+                        // Sauvegarder le fichier
+                        String imagePath = storageService.generateDocumentPath(documentModel);
                         String savedFileName = storageService.storeFile(imagePath, file.getInputStream());
 
                         if (savedFileName == null) {
@@ -95,14 +96,12 @@ public class GuestServiceImpl implements GuestService {
                         }
                     }
                 }
-            } else if (documentImages != null && documentImages.length > 0 && idDocumentModel == null) {
-                log.warn("Document images provided but no idDocument created. Images will be ignored.");
+            } else if (documentImages != null && documentImages.length > 0 && identityDocumentModel == null) {
+                log.warn("Document images provided but no identity document created. Images will be ignored.");
             }
 
             return ResponseEntity.created(URI.create("")).body(guestMapper.modelToGetResource(guestModel));
 
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("Invalid guest data format", e);
         } catch (IOException e) {
             throw new InternalServerException(
                     InternalServerExceptionTitleEnum.FILE_UPLOAD,

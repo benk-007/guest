@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +31,10 @@ public class GuestControllerImpl implements GuestController {
         return guestService.create(guestPostResource, documentImages);
     }
 
+    @PostMapping("/test")
+    public ResponseEntity<String> testEndpoint(@RequestPart("payload") String payload) {
+        return ResponseEntity.ok("Test réussi: " + payload); // ← ERREUR ICI
+    }
     @Override
     public ResponseEntity<Page<GuestGetResource>> getAllGuests(String search, Pageable pageable) {
         return guestService.retrieveAllByPage(search, pageable);

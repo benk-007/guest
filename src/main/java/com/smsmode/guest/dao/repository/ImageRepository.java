@@ -4,7 +4,7 @@
  */
 package com.smsmode.guest.dao.repository;
 
-import com.smsmode.guest.model.ImageModel;
+import com.smsmode.guest.model.DocumentModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -16,5 +16,5 @@ import org.springframework.stereotype.Repository;
  * <p>Created 20 May 2025</p>
  */
 @Repository
-public interface ImageRepository extends JpaRepository<ImageModel, String>, JpaSpecificationExecutor<ImageModel> {
+public interface ImageRepository extends JpaRepository<DocumentModel, String>, JpaSpecificationExecutor<DocumentModel> {
 }

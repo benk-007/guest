@@ -5,10 +5,10 @@
 package com.smsmode.guest.dao.service.impl;
 
 import com.smsmode.guest.dao.repository.ImageRepository;
-import com.smsmode.guest.dao.service.ImageDaoService;
+import com.smsmode.guest.dao.service.DocumentDaoService;
 import com.smsmode.guest.exception.ResourceNotFoundException;
 import com.smsmode.guest.exception.enumeration.ResourceNotFoundExceptionTitleEnum;
-import com.smsmode.guest.model.ImageModel;
+import com.smsmode.guest.model.DocumentModel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,32 +25,32 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ImageDaoServiceImpl implements ImageDaoService {
+public class DocumentDaoServiceImpl implements DocumentDaoService {
 
     private final ImageRepository imageRepository;
 
     @Override
-    public boolean existsBy(Specification<ImageModel> specification) {
+    public boolean existsBy(Specification<DocumentModel> specification) {
         return imageRepository.exists(specification);
     }
 
     @Override
-    public ImageModel save(ImageModel image) {
+    public DocumentModel save(DocumentModel image) {
         return imageRepository.save(image);
     }
 
     @Override
-    public void deleteBy(Specification<ImageModel> specification) {
+    public void deleteBy(Specification<DocumentModel> specification) {
         imageRepository.delete(specification);
     }
 
     @Override
-    public Page<ImageModel> findAllBy(Specification<ImageModel> specification, Pageable pageable) {
+    public Page<DocumentModel> findAllBy(Specification<DocumentModel> specification, Pageable pageable) {
         return imageRepository.findAll(specification, pageable);
     }
 
     @Override
-    public ImageModel findOneBy(Specification<ImageModel> specification) {
+    public DocumentModel findOneBy(Specification<DocumentModel> specification) {
         return imageRepository.findOne(specification).orElseThrow(
                 () -> {
                     log.debug("Couldn't find any image with the specified criteria");

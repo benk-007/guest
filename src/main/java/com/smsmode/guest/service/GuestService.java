@@ -20,7 +20,7 @@ public interface GuestService {
     /**
      * Creates a new guest.
      */
-    ResponseEntity<GuestGetResource> create(GuestPostResource guestJson, MultipartFile[] documentImages);
+    ResponseEntity<GuestGetResource> create(GuestPostResource guestPostResource, MultipartFile[] documentImages);
     /**
      * Retrieves all guests with pagination and optional search.
      */

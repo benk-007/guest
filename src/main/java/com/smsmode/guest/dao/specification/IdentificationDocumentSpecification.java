@@ -6,8 +6,8 @@ package com.smsmode.guest.dao.specification;
 
 import com.smsmode.guest.model.GuestModel;
 import com.smsmode.guest.model.GuestModel_;
-import com.smsmode.guest.model.IdentificationDocumentModel;
-import com.smsmode.guest.model.IdentificationDocumentModel_;
+import com.smsmode.guest.model.IdentityDocumentModel;
+import com.smsmode.guest.model.IdentityDocumentModel_;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -19,14 +19,14 @@ import org.springframework.data.jpa.domain.Specification;
  */
 public class IdentificationDocumentSpecification {
 
-    public static Specification<IdentificationDocumentModel> withId(String idDocumentId) {
+    public static Specification<IdentityDocumentModel> withId(String idDocumentId) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get(IdentificationDocumentModel_.id), idDocumentId);
+                criteriaBuilder.equal(root.get(IdentityDocumentModel_.id), idDocumentId);
     }
 
-    public static Specification<IdentificationDocumentModel> withGuestId(String guestId) {
+    public static Specification<IdentityDocumentModel> withGuestId(String guestId) {
         return (root, query, criteriaBuilder) -> {
-            Join<IdentificationDocumentModel, GuestModel> join = root.join(IdentificationDocumentModel_.guest);
+            Join<IdentityDocumentModel, GuestModel> join = root.join(IdentityDocumentModel_.guest);
             return criteriaBuilder.equal(join.get(GuestModel_.id), guestId);
         };
     }

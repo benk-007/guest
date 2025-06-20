@@ -1,7 +1,7 @@
 package com.smsmode.guest.mapper;
 
 import com.smsmode.guest.model.GuestModel;
-import com.smsmode.guest.model.IdentificationDocumentModel;
+import com.smsmode.guest.model.IdentityDocumentModel;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import com.smsmode.guest.resource.common.AuditGetResource;
 import com.smsmode.guest.resource.guest.GuestGetResource;
@@ -29,6 +29,11 @@ public abstract class GuestMapper {
     /**
      * Maps GuestPostResource to GuestModel for creation.
      */
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "modifiedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "modifiedBy", ignore = true)
     public abstract GuestModel postResourceToModel(GuestPostResource guestPostResource);
 
     /**
@@ -55,10 +60,7 @@ public abstract class GuestMapper {
     @Mapping(target = "modifiedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "modifiedBy", ignore = true)
-    @Mapping(source = "type", target = "type")
-    @Mapping(source = "documentNumber", target = "documentNumber")
-    @Mapping(source = "expirationDate", target = "expirationDate")
-    public abstract IdentificationDocumentModel idDocumentPostToModel(IdDocumentPostResource idDocumentPostResource);
+    public abstract IdentityDocumentModel identityDocumentPostToModel(IdDocumentPostResource idDocumentPostResource);
 
     /**
      * After mapping method to set audit information and handle ID documents.

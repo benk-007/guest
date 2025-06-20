@@ -4,7 +4,7 @@
  */
 package com.smsmode.guest.mapper;
 
-import com.smsmode.guest.model.ImageModel;
+import com.smsmode.guest.model.DocumentModel;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import com.smsmode.guest.resource.common.AuditGetResource;
 import com.smsmode.guest.resource.image.ImageGetResource;
@@ -25,11 +25,11 @@ import org.mapstruct.*;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class ImageMapper {
 
-    public abstract ImageGetResource modelToImageGetResource(ImageModel image);
-    public abstract ImageModel patchResourceToModel(ImagePatchResource imagePatchResource, @MappingTarget ImageModel imageModel);
+    public abstract ImageGetResource modelToImageGetResource(DocumentModel image);
+    public abstract DocumentModel patchResourceToModel(ImagePatchResource imagePatchResource, @MappingTarget DocumentModel imageModel);
 
     @AfterMapping
-    public void afterModelToImageGetResource(ImageModel image, @MappingTarget ImageGetResource imageGetResource) {
+    public void afterModelToImageGetResource(DocumentModel image, @MappingTarget ImageGetResource imageGetResource) {
         imageGetResource.setAudit(this.modelToAuditResource(image));
     }
 

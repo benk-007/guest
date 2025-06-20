@@ -25,10 +25,8 @@ public interface GuestController {
      */
     @PostMapping(consumes = "multipart/form-data")
     ResponseEntity<GuestGetResource> createGuest(
-            //TODO: rename it to payload
-            @RequestPart("guestJson") @Valid GuestPostResource guestPostResource,
-            //TODO: rename it to file
-            @RequestPart(value = "documentImage", required = false) MultipartFile[] documentImages);
+            @RequestPart("payload") @Valid GuestPostResource guestPostResource,
+            @RequestPart(value = "file", required = false) MultipartFile[] documentImages);
 
 
     /**
@@ -39,6 +37,8 @@ public interface GuestController {
             @RequestParam(value = "search", required = false) String search,
             Pageable pageable);
 
+    @PostMapping("/test")
+    ResponseEntity<String> testEndpoint(@RequestPart("payload") String payload);
     /**
      * Retrieves a guest by ID.
      */
@@ -58,4 +58,6 @@ public interface GuestController {
      */
     @DeleteMapping("/{guestId}")
     ResponseEntity<Void> deleteGuest(@PathVariable("guestId") String guestId);
+
+
 }

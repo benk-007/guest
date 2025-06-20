@@ -4,7 +4,7 @@
  */
 package com.smsmode.guest.service.impl;
 
-import com.smsmode.guest.model.ImageModel;
+import com.smsmode.guest.model.DocumentModel;
 import com.smsmode.guest.service.StorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,8 +63,8 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String generateIdDocumentImagePath(ImageModel image) {
+    public String generateDocumentPath(DocumentModel image) {
         String extension = image.getFileName().substring(image.getFileName().lastIndexOf("."));
-        return this.imageUploadPath.replace(":idDocumentId", image.getIdDocument().getId()).concat("/").concat(image.getId()).concat(extension);
+        return this.imageUploadPath.replace(":idDocumentId", image.getIdentityDocument().getId()).concat("/").concat(image.getId()).concat(extension);
     }
 }

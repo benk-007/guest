@@ -23,10 +23,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name = "X_ID_DOCUMENT")
-//TODO: name the table X_IDENTITY_DOCUMENT
-//name the model IdentityDocumentModel
-public class IdentificationDocumentModel extends AbstractBaseModel {
+@Table(name = "X_IDENTITY_DOCUMENT")
+public class IdentityDocumentModel extends AbstractBaseModel {
     @Enumerated(EnumType.STRING)
     private IdentificationDocumentTypeEnum type;
 

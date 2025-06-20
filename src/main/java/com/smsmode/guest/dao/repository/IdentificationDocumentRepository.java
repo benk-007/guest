@@ -1,6 +1,6 @@
 package com.smsmode.guest.dao.repository;
 
-import com.smsmode.guest.model.IdentificationDocumentModel;
+import com.smsmode.guest.model.IdentityDocumentModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
  * <p>Created 16 Jun 2025</p>
  */
 @Repository
-public interface IdentificationDocumentRepository extends JpaRepository<IdentificationDocumentModel, String>, JpaSpecificationExecutor<IdentificationDocumentModel> {
+public interface IdentificationDocumentRepository extends JpaRepository<IdentityDocumentModel, String>, JpaSpecificationExecutor<IdentityDocumentModel> {
 }
