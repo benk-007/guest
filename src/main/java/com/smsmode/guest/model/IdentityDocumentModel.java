@@ -4,8 +4,7 @@
  */
 package com.smsmode.guest.model;
 
-import com.smsmode.guest.embeddable.AddressEmbeddable;
-import com.smsmode.guest.embeddable.ContactEmbeddable;
+import com.smsmode.guest.enumeration.IdentificationDocumentTypeEnum;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -15,8 +14,7 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 /**
- * Entity representing a Guest in the PMS system.
- * A guest is a person who makes a reservation at the hotel.
+ * Entity representing an identification document for a guest.
  *
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
  * <p>Created 16 Jun 2025</p>
@@ -25,18 +23,15 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name = "X_GUEST")
-public class GuestModel extends AbstractBaseModel {
+@Table(name = "X_IDENTITY_DOCUMENT")
+public class IdentityDocumentModel extends AbstractBaseModel {
+    @Enumerated(EnumType.STRING)
+    private IdentificationDocumentTypeEnum type;
 
-    private String firstName;
+    private String documentNumber;
 
-    private String lastName;
+    private LocalDate expirationDate;
 
-    @Embedded
-    private ContactEmbeddable contact;
-
-    @Embedded
-    private AddressEmbeddable address;
-
-    private LocalDate birthDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private GuestModel guest;
 }

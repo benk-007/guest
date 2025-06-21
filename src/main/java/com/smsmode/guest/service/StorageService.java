@@ -4,7 +4,7 @@
  */
 package com.smsmode.guest.service;
 
-import com.smsmode.guest.model.ImageModel;
+import com.smsmode.guest.model.DocumentModel;
 
 import java.io.InputStream;
 
@@ -20,6 +20,5 @@ public interface StorageService {
 
     void deleteFile(String path);
 
-    String generateUnitImagePath(ImageModel image);
-
+    String generateDocumentPath(DocumentModel document);
 }

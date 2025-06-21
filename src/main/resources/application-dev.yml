@@ -8,9 +8,9 @@ spring:
     username: postgres
     password: mysecretpassword
 server:
-  port: 8083
+  port: 8084
 
 file:
   upload:
     root: ${user.home}/Projects/xStay/upload-folder
-    unit-image: ${file.upload.root}/units/:unitId/images
+    identity-document-image: ${file.upload.root}/guests/:guestId/identity-documents/
