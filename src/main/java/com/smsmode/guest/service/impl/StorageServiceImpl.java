@@ -64,7 +64,7 @@ public class StorageServiceImpl implements StorageService {
     public String generateDocumentPath(DocumentModel document) {
         String extension = document.getFileName().substring(document.getFileName().lastIndexOf("."));
         return this.imageUploadPath
-                .replace(":identityDocumentId", document.getIdentityDocument().getId())
+                .replace(":guestId", document.getIdentityDocument().getGuest().getId())
                 .concat("/").concat(document.getId()).concat(extension);
     }
 }
