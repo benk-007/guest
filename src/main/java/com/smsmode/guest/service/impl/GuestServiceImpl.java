@@ -4,18 +4,17 @@
  */
 package com.smsmode.guest.service.impl;
 
+import com.smsmode.guest.dao.service.DocumentDaoService;
 import com.smsmode.guest.dao.service.GuestDaoService;
 import com.smsmode.guest.dao.service.IdentityDocumentDaoService;
-import com.smsmode.guest.dao.service.DocumentDaoService;
 import com.smsmode.guest.dao.specification.DocumentSpecification;
 import com.smsmode.guest.dao.specification.GuestSpecification;
-import com.smsmode.guest.dao.specification.IdentityDocumentSpecification;
 import com.smsmode.guest.exception.InternalServerException;
 import com.smsmode.guest.exception.enumeration.InternalServerExceptionTitleEnum;
 import com.smsmode.guest.mapper.GuestMapper;
+import com.smsmode.guest.model.DocumentModel;
 import com.smsmode.guest.model.GuestModel;
 import com.smsmode.guest.model.IdentityDocumentModel;
-import com.smsmode.guest.model.DocumentModel;
 import com.smsmode.guest.resource.guest.GuestGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
 import com.smsmode.guest.resource.guest.GuestPostResource;
@@ -55,67 +54,60 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     @Transactional
-    public ResponseEntity<GuestGetResource> create(GuestPostResource guestPostResource, MultipartFile[] documentImages) {
-        try {
-            // 1. Créer le guest
-            GuestModel guestModel = guestMapper.postResourceToModel(guestPostResource);
-            guestModel = guestDaoService.save(guestModel);
+    public ResponseEntity<GuestGetResource> create(GuestPostResource guestPostResource, MultipartFile documentImages) {
+        //TODO: we should maybe add uniqueness on email
+        GuestModel guestModel = guestMapper.postResourceToModel(guestPostResource);
+        guestModel = guestDaoService.save(guestModel);
 
-            // 2. Vérifier avec ObjectUtils.isEmpty
-            IdentityDocumentModel identityDocumentModel = null;
-            if (!ObjectUtils.isEmpty(guestPostResource.getIdentityDocument())) {
 
-                identityDocumentModel = guestMapper.identityDocumentPostToModel(guestPostResource.getIdentityDocument());
-                identityDocumentModel.setGuest(guestModel);
-                identityDocumentModel = identityDocumentDaoService.save(identityDocumentModel);
+        if (!ObjectUtils.isEmpty(guestPostResource.getIdentityDocument())) {
+            IdentityDocumentModel identityDocumentModel = guestMapper.identityDocumentPostToModel(guestPostResource.getIdentityDocument());
+            identityDocumentModel.setGuest(guestModel);
+            identityDocumentModel = identityDocumentDaoService.save(identityDocumentModel);
+
+            if (!ObjectUtils.isEmpty(documentImages) && !documentImages.isEmpty()) {
+                // Créer le DocumentModel
+                DocumentModel documentModel = new DocumentModel();
+                documentModel.setFileName(documentImages.getOriginalFilename());
+                documentModel.setIdentityDocument(identityDocumentModel);
+                documentModel = documentDaoService.save(documentModel);
+
+                String imagePath = storageService.generateDocumentPath(documentModel);
+
+                try {
+                    String savedFileName = storageService.storeFile(imagePath, documentImages.getInputStream());
+
+                    if (ObjectUtils.isEmpty(savedFileName)) {
+                        documentDaoService.deleteBy(DocumentSpecification.withId(documentModel.getId()));
+                        throw new InternalServerException(InternalServerExceptionTitleEnum.FILE_UPLOAD, "An unexpected error occurred while saving the image. Please try again later.");
+                    }
+                } catch (IOException e) {
+                    log.warn("An error occurred when storing image file", e);
+                    documentDaoService.deleteBy(DocumentSpecification.withId(documentModel.getId()));
+                    throw new InternalServerException(InternalServerExceptionTitleEnum.FILE_UPLOAD, "An unexpected error occurred while saving the image. Please try again later.");
+                }
 
             } else {
-                log.debug("No identity document provided for guest: {}", guestModel.getId());
+                log.debug("Document images provided but no identity document created. Images will be ignored.");
             }
 
-            // 3. Traiter les images si fournies ET si identityDocument existe
-            if (documentImages != null && documentImages.length > 0 && identityDocumentModel != null) {
-
-                for (MultipartFile file : documentImages) {
-                    if (!file.isEmpty()) {
-
-                        // Créer le DocumentModel
-                        DocumentModel documentModel = new DocumentModel();
-                        documentModel.setFileName(file.getOriginalFilename());
-                        documentModel.setIdentityDocument(identityDocumentModel);
-                        documentModel = documentDaoService.save(documentModel);
-
-                        // Sauvegarder le fichier
-                        String imagePath = storageService.generateDocumentPath(documentModel);
-                        String savedFileName = storageService.storeFile(imagePath, file.getInputStream());
-
-                        if (savedFileName == null) {
-                            throw new InternalServerException(
-                                    InternalServerExceptionTitleEnum.FILE_UPLOAD,
-                                    "Failed to save document image: " + file.getOriginalFilename()
-                            );
-                        }
-                    }
-                }
-            } else if (documentImages != null && documentImages.length > 0 && identityDocumentModel == null) {
-                log.warn("Document images provided but no identity document created. Images will be ignored.");
-            }
-
-            return ResponseEntity.created(URI.create("")).body(guestMapper.modelToGetResource(guestModel));
-
-        } catch (IOException e) {
-            throw new InternalServerException(
-                    InternalServerExceptionTitleEnum.FILE_UPLOAD,
-                    "Failed to process document images"
-            );
+        } else {
+            log.debug("No identity document provided for guest: {}", guestModel.getId());
         }
+
+        return ResponseEntity.created(URI.create("")).body(guestMapper.modelToGetResource(guestModel));
+
     }
 
     @Override
     public ResponseEntity<Page<GuestGetResource>> retrieveAllByPage(String search, Pageable pageable) {
 
-        Specification<GuestModel> spec = GuestSpecification.withSearch(search);
-        Page<GuestModel> guests = guestDaoService.findAllBy(spec, pageable);
+
+        Specification<GuestModel> specification = GuestSpecification.withFirstNameLike(search)
+                .or(GuestSpecification.withLastNameLike(search))
+                .or(GuestSpecification.withEmailLike(search));
+
+        Page<GuestModel> guests = guestDaoService.findAllBy(specification, pageable);
 
         return ResponseEntity.ok(guests.map(guestMapper::modelToGetResource));
     }

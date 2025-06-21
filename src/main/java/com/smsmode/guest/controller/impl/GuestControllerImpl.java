@@ -27,7 +27,7 @@ public class GuestControllerImpl implements GuestController {
     private final GuestService guestService;
 
     @Override
-    public ResponseEntity<GuestGetResource> createGuest(GuestPostResource guestPostResource, MultipartFile[] documentImages) {
+    public ResponseEntity<GuestGetResource> createGuest(GuestPostResource guestPostResource, MultipartFile documentImages) {
         return guestService.create(guestPostResource, documentImages);
     }
 

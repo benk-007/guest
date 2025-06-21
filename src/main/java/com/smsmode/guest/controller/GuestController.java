@@ -26,7 +26,7 @@ public interface GuestController {
     @PostMapping(consumes = "multipart/form-data")
     ResponseEntity<GuestGetResource> createGuest(
             @RequestPart("payload") @Valid GuestPostResource guestPostResource,
-            @RequestPart(value = "file", required = false) MultipartFile[] documentImages);
+            @RequestPart(value = "file", required = false) MultipartFile documentImages);
 
 
     /**
