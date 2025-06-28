@@ -12,5 +12,5 @@ import org.springframework.stereotype.Repository;
  * <p>Created 16 Jun 2025</p>
  */
 @Repository
-public interface IdentificationDocumentRepository extends JpaRepository<IdentityDocumentModel, String>, JpaSpecificationExecutor<IdentityDocumentModel> {
+public interface IdentityDocumentRepository extends JpaRepository<IdentityDocumentModel, String>, JpaSpecificationExecutor<IdentityDocumentModel> {
 }

@@ -22,4 +22,6 @@ public interface IdentityDocumentDaoService {
     boolean existsBy(Specification<IdentityDocumentModel> specification);
 
     void deleteBy(Specification<IdentityDocumentModel> specification);
+
+    void delete(IdentityDocumentModel idDocument);
 }

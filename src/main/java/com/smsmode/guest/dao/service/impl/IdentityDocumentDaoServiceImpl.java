@@ -1,6 +1,6 @@
 package com.smsmode.guest.dao.service.impl;
 
-import com.smsmode.guest.dao.repository.IdentificationDocumentRepository;
+import com.smsmode.guest.dao.repository.IdentityDocumentRepository;
 import com.smsmode.guest.dao.service.IdentityDocumentDaoService;
 import com.smsmode.guest.exception.ResourceNotFoundException;
 import com.smsmode.guest.exception.enumeration.ResourceNotFoundExceptionTitleEnum;
@@ -23,16 +23,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class IdentityDocumentDaoServiceImpl implements IdentityDocumentDaoService {
 
-    private final IdentificationDocumentRepository idDocumentRepository;
+    private final IdentityDocumentRepository identityDocumentRepository;
 
     @Override
     public IdentityDocumentModel save(IdentityDocumentModel idDocument) {
-        return idDocumentRepository.save(idDocument);
+        return identityDocumentRepository.save(idDocument);
     }
 
     @Override
     public IdentityDocumentModel findOneBy(Specification<IdentityDocumentModel> specification) {
-        return idDocumentRepository.findOne(specification).orElseThrow(
+        return identityDocumentRepository.findOne(specification).orElseThrow(
                 () -> {
                     log.debug("Couldn't find any identification document with the specified criteria");
                     return new ResourceNotFoundException(
@@ -43,16 +43,21 @@ public class IdentityDocumentDaoServiceImpl implements IdentityDocumentDaoServic
 
     @Override
     public Page<IdentityDocumentModel> findAllBy(Specification<IdentityDocumentModel> specification, Pageable pageable) {
-        return idDocumentRepository.findAll(specification, pageable);
+        return identityDocumentRepository.findAll(specification, pageable);
     }
 
     @Override
     public boolean existsBy(Specification<IdentityDocumentModel> specification) {
-        return idDocumentRepository.exists(specification);
+        return identityDocumentRepository.exists(specification);
     }
 
     @Override
     public void deleteBy(Specification<IdentityDocumentModel> specification) {
-        idDocumentRepository.delete(specification);
+        identityDocumentRepository.delete(specification);
+    }
+
+    @Override
+    public void delete(IdentityDocumentModel idDocument) {
+        identityDocumentRepository.delete(idDocument);
     }
 }

@@ -5,9 +5,12 @@
 package com.smsmode.guest.service.impl;
 
 import com.smsmode.guest.dao.service.GuestDaoService;
+import com.smsmode.guest.dao.service.IdentityDocumentDaoService;
 import com.smsmode.guest.dao.specification.GuestSpecification;
+import com.smsmode.guest.dao.specification.IdentityDocumentSpecification;
 import com.smsmode.guest.mapper.GuestMapper;
 import com.smsmode.guest.model.GuestModel;
+import com.smsmode.guest.model.IdentityDocumentModel;
 import com.smsmode.guest.resource.guest.GuestItemGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
 import com.smsmode.guest.resource.guest.GuestPostResource;
@@ -39,6 +42,7 @@ public class GuestServiceImpl implements GuestService {
     private final GuestMapper guestMapper;
     private final GuestDaoService guestDaoService;
     private final IdentityDocumentService identityDocumentService;
+    private final IdentityDocumentDaoService identityDocumentDaoService;
 
     @Override
     @Transactional
@@ -82,38 +86,12 @@ public class GuestServiceImpl implements GuestService {
     @Override
     @Transactional
     public ResponseEntity<Void> deleteById(String guestId) {
-
-/*        if (!guestDaoService.existsById(guestId)) {
-            return ResponseEntity.notFound().build();
+        GuestModel guest = guestDaoService.findOneBy(GuestSpecification.withIdEqual(guestId));
+        Page<IdentityDocumentModel> identityDocumentModels = identityDocumentDaoService.findAllBy(IdentityDocumentSpecification.withGuestId(guestId), Pageable.unpaged());
+        for (IdentityDocumentModel identityDocumentModel : identityDocumentModels.getContent()) {
+            identityDocumentService.deleteByIdWithImages(identityDocumentModel.getId());
         }
-
-        // 1. Supprimer tous les identity documents avec leurs images
-//        Specification<IdentityDocumentModel> idDocSpec = IdentityDocumentSpecification.withGuestId(guestId);
-        Specification<IdentityDocumentModel> idDocSpec = null;
-        Page<IdentityDocumentModel> identityDocuments = identityDocumentDaoService.findAllBy(idDocSpec, Pageable.unpaged());
-
-        for (IdentityDocumentModel idDoc : identityDocuments) {
-            // Supprimer les images de chaque identity document
-            Specification<DocumentModel> imageSpec = DocumentSpecification.withIdentityDocumentId(idDoc.getId());
-            Page<DocumentModel> images = documentDaoService.findAllBy(imageSpec, Pageable.unpaged());
-
-            for (DocumentModel image : images) {
-                // Supprimer le fichier physique
-                String imagePath = storageService.generateDocumentPath(image);
-                storageService.deleteFile(imagePath);
-
-                // Supprimer l'enregistrement
-                documentDaoService.deleteBy(DocumentSpecification.withId(image.getId()));
-            }
-
-            // Supprimer l'identity document
-            identityDocumentDaoService.deleteBy(IdentityDocumentSpecification.withId(idDoc.getId()));
-        }
-
-        // 2. Supprimer le guest
-        guestDaoService.deleteById(guestId);
-
-        return ResponseEntity.noContent().build();*/
-        return null;
+        guestDaoService.delete(guest);
+        return ResponseEntity.ok().build();
     }
 }

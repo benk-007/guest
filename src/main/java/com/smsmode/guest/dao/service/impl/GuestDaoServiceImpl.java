@@ -49,4 +49,9 @@ public class GuestDaoServiceImpl implements GuestDaoService {
     public void deleteById(String guestId) {
         guestRepository.deleteById(guestId);
     }
+
+    @Override
+    public void delete(GuestModel guest) {
+        guestRepository.delete(guest);
+    }
 }

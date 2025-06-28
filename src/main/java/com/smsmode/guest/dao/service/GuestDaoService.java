@@ -15,4 +15,7 @@ public interface GuestDaoService {
     boolean existsById(String guestId);
 
     void deleteById(String guestId);
+
+    void delete(GuestModel guest);
+
 }
