@@ -8,8 +8,8 @@ import com.smsmode.guest.model.IdentityDocumentModel;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import com.smsmode.guest.resource.common.AuditGetResource;
 import com.smsmode.guest.resource.iddocument.IdDocumentPatchResource;
-import com.smsmode.guest.resource.iddocument.IdentityDocumentPostResource;
 import com.smsmode.guest.resource.iddocument.IdentityDocumentItemGetResource;
+import com.smsmode.guest.resource.iddocument.IdentityDocumentPostResource;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.*;
 import org.springframework.util.ObjectUtils;
@@ -41,6 +41,7 @@ public abstract class IdentityDocumentMapper {
     /**
      * Maps IdDocumentPatchResource to IdentificationDocumentModel for partial updates.
      */
+    @Mapping(target = "guest", ignore = true)
     public abstract IdentityDocumentModel patchResourceToModel(IdDocumentPatchResource idDocumentPatchResource, @MappingTarget IdentityDocumentModel idDocumentModel);
 
     /**

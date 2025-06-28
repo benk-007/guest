@@ -55,17 +55,15 @@ public interface IdentityDocumentController {
     /**
      * Updates an identity document partially (without images).
      */
-    @PatchMapping("/{idDocumentId}")
+    @PatchMapping("/{identityDocumentId}")
     ResponseEntity<IdentityDocumentItemGetResource> updateIdDocument(
-            @RequestParam("guestId") String guestId,
-            @PathVariable("idDocumentId") String idDocumentId,
+            @PathVariable("identityDocumentId") String identityDocumentId,
             @RequestBody @Valid IdDocumentPatchResource idDocumentPatchResource);
 
     /**
      * Deletes an identity document and its associated images.
      */
-    @DeleteMapping("/{idDocumentId}")
+    @DeleteMapping("/{identityDocumentId}")
     ResponseEntity<Void> deleteIdDocument(
-            @RequestParam("guestId") String guestId,
-            @PathVariable("idDocumentId") String idDocumentId);
+            @PathVariable("identityDocumentId") String identityDocumentId);
 }

@@ -148,15 +148,13 @@ public class IdentityDocumentServiceImpl implements IdentityDocumentService {
     }
 
     @Override
-    public ResponseEntity<IdentityDocumentItemGetResource> updateById(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource) {
-        log.debug("Updating identity document: {} for guest: {}", idDocumentId, guestId);
+    public ResponseEntity<IdentityDocumentItemGetResource> updateById(String identityDocumentId, IdDocumentPatchResource idDocumentPatchResource) {
+        log.debug("Updating identity document: {}", identityDocumentId);
         Specification<IdentityDocumentModel> spec = Specification.where(
-                        IdentityDocumentSpecification.withId(idDocumentId))
-                .and(IdentityDocumentSpecification.withGuestId(guestId));
+                IdentityDocumentSpecification.withId(identityDocumentId));
         IdentityDocumentModel existingIdDocument = identityDocumentDaoService.findOneBy(spec);
         IdentityDocumentModel updatedIdDocument = identityDocumentMapper.patchResourceToModel(idDocumentPatchResource, existingIdDocument);
         updatedIdDocument = identityDocumentDaoService.save(updatedIdDocument);
-
         return ResponseEntity.ok(identityDocumentMapper.modelToItemGetResource(updatedIdDocument));
     }
 
@@ -165,7 +163,7 @@ public class IdentityDocumentServiceImpl implements IdentityDocumentService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Void> deleteByIdWithImages(String guestId, String idDocumentId) {
+    public ResponseEntity<Void> deleteByIdWithImages(String idDocumentId) {
 
 /*        Specification<IdentityDocumentModel> spec = Specification.where(
                         IdentityDocumentSpecification.withId(idDocumentId))

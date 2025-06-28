@@ -47,11 +47,11 @@ public interface IdentityDocumentService {
     /**
      * Updates an identification document partially.
      */
-    ResponseEntity<IdentityDocumentItemGetResource> updateById(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource);
+    ResponseEntity<IdentityDocumentItemGetResource> updateById(String idDocumentId, IdDocumentPatchResource idDocumentPatchResource);
 
     /**
      * Deletes identity document and associated images.
      */
-    ResponseEntity<Void> deleteByIdWithImages(String guestId, String idDocumentId);
+    ResponseEntity<Void> deleteByIdWithImages(String idDocumentId);
 
 }
