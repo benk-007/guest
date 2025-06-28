@@ -4,7 +4,7 @@
  */
 package com.smsmode.guest.model;
 
-import com.smsmode.guest.enumeration.IdentificationDocumentTypeEnum;
+import com.smsmode.guest.enumeration.IdentityDocumentTypeEnum;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,11 +26,13 @@ import java.time.LocalDate;
 @Table(name = "X_IDENTITY_DOCUMENT")
 public class IdentityDocumentModel extends AbstractBaseModel {
     @Enumerated(EnumType.STRING)
-    private IdentificationDocumentTypeEnum type;
+    private IdentityDocumentTypeEnum type;
 
-    private String documentNumber;
+    private String value;
 
     private LocalDate expirationDate;
+
+    private String fileName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private GuestModel guest;

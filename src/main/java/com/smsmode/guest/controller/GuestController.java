@@ -1,6 +1,6 @@
 package com.smsmode.guest.controller;
 
-import com.smsmode.guest.resource.guest.GuestGetResource;
+import com.smsmode.guest.resource.guest.GuestItemGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
 import com.smsmode.guest.resource.guest.GuestPostResource;
 import jakarta.validation.Valid;
@@ -24,7 +24,7 @@ public interface GuestController {
      * Handles all cases: guest alone, guest+idDocument, guest+idDocument+images
      */
     @PostMapping(consumes = "multipart/form-data")
-    ResponseEntity<GuestGetResource> createGuest(
+    ResponseEntity<GuestItemGetResource> createGuest(
             @RequestPart("payload") @Valid GuestPostResource guestPostResource,
             @RequestPart(value = "file", required = false) MultipartFile documentImages);
 
@@ -33,20 +33,20 @@ public interface GuestController {
      * Retrieves all guests with optional search and pagination.
      */
     @GetMapping
-    ResponseEntity<Page<GuestGetResource>> getAllGuests(
+    ResponseEntity<Page<GuestItemGetResource>> getAllGuests(
             @RequestParam(value = "search", required = false) String search,
             Pageable pageable);
 
     /* Retrieves a guest by ID.
      */
     @GetMapping("/{guestId}")
-    ResponseEntity<GuestGetResource> getGuestById(@PathVariable("guestId") String guestId);
+    ResponseEntity<GuestItemGetResource> getGuestById(@PathVariable("guestId") String guestId);
 
     /**
      * Updates a guest partially.
      */
     @PatchMapping("/{guestId}")
-    ResponseEntity<GuestGetResource> updateGuest(
+    ResponseEntity<GuestItemGetResource> updateGuest(
             @PathVariable("guestId") String guestId,
             @RequestBody @Valid GuestPatchResource guestPatchResource);
 

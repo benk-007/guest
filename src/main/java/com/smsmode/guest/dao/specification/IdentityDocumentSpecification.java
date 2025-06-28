@@ -10,6 +10,7 @@ import com.smsmode.guest.model.IdentityDocumentModel;
 import com.smsmode.guest.model.IdentityDocumentModel_;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Specification class for IdentificationDocument entity queries.
@@ -31,16 +32,15 @@ public class IdentityDocumentSpecification {
         };
     }
 
-    public static Specification<IdentityDocumentModel> withSearch(String search) {
-        return (root, query, criteriaBuilder) -> {
-            if (search == null || search.trim().isEmpty()) {
-                return criteriaBuilder.conjunction();
-            }
-            String likePattern = "%" + search.toLowerCase() + "%";
-            return criteriaBuilder.or(
-                    criteriaBuilder.like(criteriaBuilder.lower(root.get(IdentityDocumentModel_.documentNumber)), likePattern),
-                    criteriaBuilder.like(criteriaBuilder.lower(root.get(IdentityDocumentModel_.type).as(String.class)), likePattern)
-            );
-        };
+    public static Specification<IdentityDocumentModel> withValueLike(String value) {
+        return (root, query, criteriaBuilder) ->
+                ObjectUtils.isEmpty(value) ? criteriaBuilder.conjunction() :
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get(IdentityDocumentModel_.value)),
+                                "%".concat(value.toLowerCase()).concat("%"));
+
+    }
+
+    public static Specification<IdentityDocumentModel> withFile() {
+        return (root, query, criteriaBuilder) -> criteriaBuilder.isNotNull(root.get(IdentityDocumentModel_.fileName));
     }
 }

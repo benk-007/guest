@@ -1,15 +1,16 @@
 package com.smsmode.guest.mapper;
 
+import com.smsmode.guest.dao.service.IdentityDocumentDaoService;
+import com.smsmode.guest.dao.specification.IdentityDocumentSpecification;
 import com.smsmode.guest.model.GuestModel;
-import com.smsmode.guest.model.IdentityDocumentModel;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import com.smsmode.guest.resource.common.AuditGetResource;
-import com.smsmode.guest.resource.guest.GuestGetResource;
+import com.smsmode.guest.resource.guest.GuestItemGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
 import com.smsmode.guest.resource.guest.GuestPostResource;
-import com.smsmode.guest.resource.iddocument.IdDocumentPostResource;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 /**
@@ -22,9 +23,15 @@ import org.mapstruct.*;
 @Mapper(
         componentModel = "spring",
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {IdentityDocumentMapper.class})
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public abstract class GuestMapper {
+
+    private IdentityDocumentDaoService identityDocumentDaoService;
+
+    @Autowired
+    void setIdentityDocumentDaoService(IdentityDocumentDaoService identityDocumentDaoService) {
+        this.identityDocumentDaoService = identityDocumentDaoService;
+    }
 
     /**
      * Maps GuestPostResource to GuestModel for creation.
@@ -39,7 +46,7 @@ public abstract class GuestMapper {
     /**
      * Maps GuestModel to GuestGetResource for retrieval.
      */
-    public abstract GuestGetResource modelToGetResource(GuestModel guestModel);
+    public abstract GuestItemGetResource modelToGetResource(GuestModel guestModel);
 
     /**
      * Maps GuestPatchResource to GuestModel for partial updates.
@@ -52,21 +59,11 @@ public abstract class GuestMapper {
     public abstract AuditGetResource modelToAuditResource(AbstractBaseModel baseModel);
 
     /**
-     * Maps IdDocumentPostResource to IdentificationDocumentModel.
-     */
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "guest", ignore = true)
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "modifiedAt", ignore = true)
-    @Mapping(target = "createdBy", ignore = true)
-    @Mapping(target = "modifiedBy", ignore = true)
-    public abstract IdentityDocumentModel identityDocumentPostToModel(IdDocumentPostResource idDocumentPostResource);
-
-    /**
      * After mapping method to set audit information and handle ID documents.
      */
     @AfterMapping
-    public void afterModelToGetResource(GuestModel guestModel, @MappingTarget GuestGetResource guestGetResource) {
-        guestGetResource.setAudit(this.modelToAuditResource(guestModel));
+    public void afterModelToItemGetResource(GuestModel guestModel, @MappingTarget GuestItemGetResource guestItemGetResource) {
+        guestItemGetResource.setAudit(this.modelToAuditResource(guestModel));
+        guestItemGetResource.setWithIdentityDocument(identityDocumentDaoService.existsBy(IdentityDocumentSpecification.withFile().and(IdentityDocumentSpecification.withGuestId(guestItemGetResource.getId()))));
     }
 }

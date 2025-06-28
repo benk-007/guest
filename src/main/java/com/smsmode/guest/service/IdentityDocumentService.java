@@ -4,9 +4,12 @@
  */
 package com.smsmode.guest.service;
 
-import com.smsmode.guest.resource.iddocument.IdDocumentGetResource;
+import com.smsmode.guest.model.GuestModel;
+import com.smsmode.guest.model.IdentityDocumentModel;
+import com.smsmode.guest.resource.iddocument.IdentityDocumentItemGetResource;
 import com.smsmode.guest.resource.iddocument.IdDocumentPatchResource;
-import com.smsmode.guest.resource.iddocument.IdDocumentPostResource;
+import com.smsmode.guest.resource.iddocument.IdentityDocumentPostResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -21,27 +24,34 @@ import org.springframework.web.multipart.MultipartFile;
 public interface IdentityDocumentService {
 
     /**
-     * Creates a new identification document for a guest.
-     */
-    ResponseEntity<IdDocumentGetResource> create(String guestId, IdDocumentPostResource idDocumentPostResource, MultipartFile[] documentImages);
-
-    /**
      * Retrieves all identification documents for a guest with pagination and search support
      */
-    ResponseEntity<Page<IdDocumentGetResource>> retrieveAllByGuestId(String guestId, String search, Pageable pageable);
+    ResponseEntity<Page<IdentityDocumentItemGetResource>> retrieveAllByGuestId(String guestId, String search, Pageable pageable);
+
+
+    /**
+     * Creates a new identification document for a guest.
+     */
+    ResponseEntity<IdentityDocumentItemGetResource> create(IdentityDocumentPostResource identityDocumentPostResource, MultipartFile identityDocumentFile);
+
+    IdentityDocumentModel create(GuestModel guestModel, IdentityDocumentPostResource identityDocumentPostResource, MultipartFile identityDocumentFile);
+
 
     /**
      * Retrieves an identification document by ID.
      */
-    ResponseEntity<IdDocumentGetResource> retrieveById(String guestId, String idDocumentId);
+    ResponseEntity<IdentityDocumentItemGetResource> retrieveById(String identityDocumentId);
+
+    ResponseEntity<Resource> retrieveImageById(String identityDocumentId);
 
     /**
      * Updates an identification document partially.
      */
-    ResponseEntity<IdDocumentGetResource> updateById(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource);
+    ResponseEntity<IdentityDocumentItemGetResource> updateById(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource);
 
     /**
-    Deletes identity document and associated images.
+     * Deletes identity document and associated images.
      */
     ResponseEntity<Void> deleteByIdWithImages(String guestId, String idDocumentId);
+
 }

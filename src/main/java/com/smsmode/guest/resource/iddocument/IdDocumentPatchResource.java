@@ -1,13 +1,13 @@
 package com.smsmode.guest.resource.iddocument;
 
-import com.smsmode.guest.enumeration.IdentificationDocumentTypeEnum;
+import com.smsmode.guest.enumeration.IdentityDocumentTypeEnum;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
 public class IdDocumentPatchResource {
-    private IdentificationDocumentTypeEnum type;
-    private String documentNumber;
+    private IdentityDocumentTypeEnum type;
+    private String value;
     private LocalDate expirationDate;
 }

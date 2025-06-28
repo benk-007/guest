@@ -8,12 +8,13 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class GuestGetResource {
+public class GuestItemGetResource {
     private String id;
     private String firstName;
     private String lastName;
     private ContactEmbeddable contact;
     private AddressEmbeddable address;
     private LocalDate birthDate;
+    private boolean withIdentityDocument;
     private AuditGetResource audit;
 }

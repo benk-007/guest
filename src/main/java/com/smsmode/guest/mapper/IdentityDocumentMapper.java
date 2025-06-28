@@ -7,11 +7,12 @@ package com.smsmode.guest.mapper;
 import com.smsmode.guest.model.IdentityDocumentModel;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import com.smsmode.guest.resource.common.AuditGetResource;
-import com.smsmode.guest.resource.iddocument.IdDocumentGetResource;
 import com.smsmode.guest.resource.iddocument.IdDocumentPatchResource;
-import com.smsmode.guest.resource.iddocument.IdDocumentPostResource;
+import com.smsmode.guest.resource.iddocument.IdentityDocumentPostResource;
+import com.smsmode.guest.resource.iddocument.IdentityDocumentItemGetResource;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.*;
+import org.springframework.util.ObjectUtils;
 
 /**
  * Mapper for IdentificationDocument entity and resources.
@@ -29,12 +30,13 @@ public abstract class IdentityDocumentMapper {
     /**
      * Maps IdDocumentPostResource to IdentificationDocumentModel for creation.
      */
-    public abstract IdentityDocumentModel postResourceToModel(IdDocumentPostResource idDocumentPostResource);
+    @Mapping(target = "guest", ignore = true)
+    public abstract IdentityDocumentModel postResourceToModel(IdentityDocumentPostResource identityDocumentPostResource);
 
     /**
      * Maps IdentificationDocumentModel to IdDocumentGetResource for retrieval.
      */
-    public abstract IdDocumentGetResource modelToGetResource(IdentityDocumentModel idDocumentModel);
+    public abstract IdentityDocumentItemGetResource modelToItemGetResource(IdentityDocumentModel identityDocumentModel);
 
     /**
      * Maps IdDocumentPatchResource to IdentificationDocumentModel for partial updates.
@@ -50,7 +52,8 @@ public abstract class IdentityDocumentMapper {
      * After mapping method to set audit information.
      */
     @AfterMapping
-    public void afterModelToGetResource(IdentityDocumentModel idDocumentModel, @MappingTarget IdDocumentGetResource idDocumentGetResource) {
-        idDocumentGetResource.setAudit(this.modelToAuditResource(idDocumentModel));
+    public void afterModelToItemGetResource(IdentityDocumentModel identityDocumentModel, @MappingTarget IdentityDocumentItemGetResource identityDocumentItemGetResource) {
+        identityDocumentItemGetResource.setFileProvided(!ObjectUtils.isEmpty(identityDocumentModel));
+        identityDocumentItemGetResource.setAudit(this.modelToAuditResource(identityDocumentModel));
     }
 }

@@ -4,10 +4,11 @@
  */
 package com.smsmode.guest.controller;
 
-import com.smsmode.guest.resource.iddocument.IdDocumentGetResource;
 import com.smsmode.guest.resource.iddocument.IdDocumentPatchResource;
-import com.smsmode.guest.resource.iddocument.IdDocumentPostResource;
+import com.smsmode.guest.resource.iddocument.IdentityDocumentItemGetResource;
+import com.smsmode.guest.resource.iddocument.IdentityDocumentPostResource;
 import jakarta.validation.Valid;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -20,47 +21,48 @@ import org.springframework.web.multipart.MultipartFile;
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
  * <p>Created 16 Jun 2025</p>
  */
-@RequestMapping("/id-documents")
+@RequestMapping("/identity-documents")
 public interface IdentityDocumentController {
+
+    /**
+     * Retrieves all identity documents for a guest with pagination and search.
+     */
+    @GetMapping
+    ResponseEntity<Page<IdentityDocumentItemGetResource>> getAllIdentityDocumentsByPage(
+            @RequestParam("guestId") String guestId,
+            @RequestParam(value = "search", required = false) String search,
+            Pageable pageable);
 
     /**
      * Creates a new identity document with optional images (multipart support).
      */
     @PostMapping(consumes = "multipart/form-data")
-    ResponseEntity<IdDocumentGetResource> createIdDocument(
-            @RequestParam("guestId") String guestId,
-            @RequestPart("payload") @Valid IdDocumentPostResource idDocumentPostResource,
-            @RequestPart(value = "file", required = false) MultipartFile[] documentImages);
-
-    /**
-     Retrieves all identity documents for a guest with pagination and search.
-     */
-    @GetMapping
-    ResponseEntity<Page<IdDocumentGetResource>> getAllIdDocuments(
-            @RequestParam("guestId") String guestId,
-            @RequestParam(value = "search", required = false) String search,
-            Pageable pageable);
-
+    ResponseEntity<IdentityDocumentItemGetResource> createIdDocument(
+            @RequestPart("payload") @Valid IdentityDocumentPostResource identityDocumentPostResource,
+            @RequestPart(value = "file", required = false) MultipartFile documentImages);
 
     /**
      * Retrieves an identification document by ID.
      */
-    @GetMapping("/{idDocumentId}")
-    ResponseEntity<IdDocumentGetResource> getIdDocumentById(
-            @RequestParam("guestId") String guestId,
-            @PathVariable("idDocumentId") String idDocumentId);
+    @GetMapping("/{identityDocumentId}")
+    ResponseEntity<IdentityDocumentItemGetResource> getIdentityDocumentById(
+            @PathVariable("identityDocumentId") String identityDocumentId);
+
+    @GetMapping("/{identityDocumentId}/image")
+    ResponseEntity<Resource> getIdentityDocumentImageById(
+            @PathVariable("identityDocumentId") String identityDocumentId);
 
     /**
      * Updates an identity document partially (without images).
      */
     @PatchMapping("/{idDocumentId}")
-    ResponseEntity<IdDocumentGetResource> updateIdDocument(
+    ResponseEntity<IdentityDocumentItemGetResource> updateIdDocument(
             @RequestParam("guestId") String guestId,
             @PathVariable("idDocumentId") String idDocumentId,
             @RequestBody @Valid IdDocumentPatchResource idDocumentPatchResource);
 
     /**
-     Deletes an identity document and its associated images.
+     * Deletes an identity document and its associated images.
      */
     @DeleteMapping("/{idDocumentId}")
     ResponseEntity<Void> deleteIdDocument(

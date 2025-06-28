@@ -5,11 +5,12 @@
 package com.smsmode.guest.controller.impl;
 
 import com.smsmode.guest.controller.IdentityDocumentController;
-import com.smsmode.guest.resource.iddocument.IdDocumentGetResource;
 import com.smsmode.guest.resource.iddocument.IdDocumentPatchResource;
-import com.smsmode.guest.resource.iddocument.IdDocumentPostResource;
+import com.smsmode.guest.resource.iddocument.IdentityDocumentItemGetResource;
+import com.smsmode.guest.resource.iddocument.IdentityDocumentPostResource;
 import com.smsmode.guest.service.IdentityDocumentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -28,31 +29,37 @@ public class IdentityDocumentControllerImpl implements IdentityDocumentControlle
 
     private final IdentityDocumentService identityDocumentService;
 
-    /**
-      Support multipart pour création avec images
-     */
     @Override
-    public ResponseEntity<IdDocumentGetResource> createIdDocument(String guestId, IdDocumentPostResource idDocumentPostResource, MultipartFile[] documentImages) {
-        return identityDocumentService.create(guestId, idDocumentPostResource, documentImages);
-    }
-
-    @Override
-    public ResponseEntity<Page<IdDocumentGetResource>> getAllIdDocuments(String guestId, String search, Pageable pageable) {
+    public ResponseEntity<Page<IdentityDocumentItemGetResource>> getAllIdentityDocumentsByPage(String guestId, String search, Pageable pageable) {
         return identityDocumentService.retrieveAllByGuestId(guestId, search, pageable);
     }
 
+    /**
+     * Support multipart pour création avec images
+     */
     @Override
-    public ResponseEntity<IdDocumentGetResource> getIdDocumentById(String guestId, String idDocumentId) {
-        return identityDocumentService.retrieveById(guestId, idDocumentId);
+    public ResponseEntity<IdentityDocumentItemGetResource> createIdDocument(IdentityDocumentPostResource identityDocumentPostResource, MultipartFile documentImages) {
+        return identityDocumentService.create(identityDocumentPostResource, documentImages);
+    }
+
+
+    @Override
+    public ResponseEntity<IdentityDocumentItemGetResource> getIdentityDocumentById(String identityDocumentId) {
+        return identityDocumentService.retrieveById(identityDocumentId);
     }
 
     @Override
-    public ResponseEntity<IdDocumentGetResource> updateIdDocument(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource) {
+    public ResponseEntity<Resource> getIdentityDocumentImageById(String identityDocumentId) {
+        return identityDocumentService.retrieveImageById(identityDocumentId);
+    }
+
+    @Override
+    public ResponseEntity<IdentityDocumentItemGetResource> updateIdDocument(String guestId, String idDocumentId, IdDocumentPatchResource idDocumentPatchResource) {
         return identityDocumentService.updateById(guestId, idDocumentId, idDocumentPatchResource);
     }
 
     /**
-     Suppression avec images
+     * Suppression avec images
      */
     @Override
     public ResponseEntity<Void> deleteIdDocument(String guestId, String idDocumentId) {
