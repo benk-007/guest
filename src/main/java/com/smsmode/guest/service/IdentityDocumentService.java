@@ -34,7 +34,7 @@ public interface IdentityDocumentService {
      */
     ResponseEntity<IdentityDocumentItemGetResource> create(IdentityDocumentPostResource identityDocumentPostResource, MultipartFile identityDocumentFile);
 
-    IdentityDocumentModel create(GuestModel guestModel, IdentityDocumentPostResource identityDocumentPostResource, MultipartFile identityDocumentFile);
+    IdentityDocumentModel create(GuestModel guestModel, IdentityDocumentModel identityDocumentModel, MultipartFile identityDocumentFile);
 
 
     /**
@@ -47,7 +47,7 @@ public interface IdentityDocumentService {
     /**
      * Updates an identification document partially.
      */
-    ResponseEntity<IdentityDocumentItemGetResource> updateById(String idDocumentId, IdDocumentPatchResource idDocumentPatchResource);
+    ResponseEntity<IdentityDocumentItemGetResource> updateById(String idDocumentId, IdDocumentPatchResource idDocumentPatchResource, MultipartFile documentImage);
 
     /**
      * Deletes identity document and associated images.

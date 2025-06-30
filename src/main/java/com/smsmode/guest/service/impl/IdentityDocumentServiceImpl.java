@@ -73,18 +73,17 @@ public class IdentityDocumentServiceImpl implements IdentityDocumentService {
     @Transactional
     public ResponseEntity<IdentityDocumentItemGetResource> create(IdentityDocumentPostResource idDocumentPostResource, MultipartFile identityDocumentFile) {
         GuestModel guest = guestDaoService.findOneBy(GuestSpecification.withIdEqual(idDocumentPostResource.getGuestId()));
-        IdentityDocumentModel identityDocumentModel = this.create(guest, idDocumentPostResource, identityDocumentFile);
+        IdentityDocumentModel identityDocumentModel = identityDocumentMapper.postResourceToModel(idDocumentPostResource);
+        identityDocumentModel = this.create(guest, identityDocumentModel, identityDocumentFile);
         return ResponseEntity.created(URI.create("")).body(identityDocumentMapper.modelToItemGetResource(identityDocumentModel));
     }
 
     @Override
     @Transactional
-    public IdentityDocumentModel create(GuestModel guestModel, IdentityDocumentPostResource idDocumentPostResource, MultipartFile identityDocumentFile) {
-        if (!ObjectUtils.isEmpty(idDocumentPostResource)) {
-            IdentityDocumentModel identityDocumentModel = identityDocumentMapper.postResourceToModel(idDocumentPostResource);
+    public IdentityDocumentModel create(GuestModel guestModel, IdentityDocumentModel identityDocumentModel, MultipartFile identityDocumentFile) {
+        if (!ObjectUtils.isEmpty(identityDocumentModel)) {
             identityDocumentModel.setGuest(guestModel);
             identityDocumentModel = identityDocumentDaoService.save(identityDocumentModel);
-
             if (!ObjectUtils.isEmpty(identityDocumentFile) && !identityDocumentFile.isEmpty()) {
                 identityDocumentModel.setFileName(identityDocumentFile.getOriginalFilename());
                 identityDocumentModel = identityDocumentDaoService.save(identityDocumentModel);
@@ -148,13 +147,14 @@ public class IdentityDocumentServiceImpl implements IdentityDocumentService {
     }
 
     @Override
-    public ResponseEntity<IdentityDocumentItemGetResource> updateById(String identityDocumentId, IdDocumentPatchResource idDocumentPatchResource) {
+    @Transactional
+    public ResponseEntity<IdentityDocumentItemGetResource> updateById(String identityDocumentId, IdDocumentPatchResource idDocumentPatchResource, MultipartFile documentImage) {
         log.debug("Updating identity document: {}", identityDocumentId);
         Specification<IdentityDocumentModel> spec = Specification.where(
                 IdentityDocumentSpecification.withId(identityDocumentId));
         IdentityDocumentModel existingIdDocument = identityDocumentDaoService.findOneBy(spec);
         IdentityDocumentModel updatedIdDocument = identityDocumentMapper.patchResourceToModel(idDocumentPatchResource, existingIdDocument);
-        updatedIdDocument = identityDocumentDaoService.save(updatedIdDocument);
+        updatedIdDocument = this.create(updatedIdDocument.getGuest(), updatedIdDocument, documentImage);
         return ResponseEntity.ok(identityDocumentMapper.modelToItemGetResource(updatedIdDocument));
     }
 

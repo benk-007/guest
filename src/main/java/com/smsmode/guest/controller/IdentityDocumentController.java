@@ -34,6 +34,18 @@ public interface IdentityDocumentController {
             Pageable pageable);
 
     /**
+     * Retrieves an identification document by ID.
+     */
+    @GetMapping("/{identityDocumentId}")
+    ResponseEntity<IdentityDocumentItemGetResource> getIdentityDocumentById(
+            @PathVariable("identityDocumentId") String identityDocumentId);
+
+
+    @GetMapping("/{identityDocumentId}/image")
+    ResponseEntity<Resource> getIdentityDocumentImageById(
+            @PathVariable("identityDocumentId") String identityDocumentId);
+
+    /**
      * Creates a new identity document with optional images (multipart support).
      */
     @PostMapping(consumes = "multipart/form-data")
@@ -42,23 +54,13 @@ public interface IdentityDocumentController {
             @RequestPart(value = "file", required = false) MultipartFile documentImages);
 
     /**
-     * Retrieves an identification document by ID.
-     */
-    @GetMapping("/{identityDocumentId}")
-    ResponseEntity<IdentityDocumentItemGetResource> getIdentityDocumentById(
-            @PathVariable("identityDocumentId") String identityDocumentId);
-
-    @GetMapping("/{identityDocumentId}/image")
-    ResponseEntity<Resource> getIdentityDocumentImageById(
-            @PathVariable("identityDocumentId") String identityDocumentId);
-
-    /**
      * Updates an identity document partially (without images).
      */
-    @PatchMapping("/{identityDocumentId}")
+    @PatchMapping(value = "/{identityDocumentId}", consumes = "multipart/form-data")
     ResponseEntity<IdentityDocumentItemGetResource> updateIdDocument(
             @PathVariable("identityDocumentId") String identityDocumentId,
-            @RequestBody @Valid IdDocumentPatchResource idDocumentPatchResource);
+            @RequestPart("payload") @Valid IdDocumentPatchResource idDocumentPatchResource,
+            @RequestPart(value = "file", required = false) MultipartFile documentImage);
 
     /**
      * Deletes an identity document and its associated images.

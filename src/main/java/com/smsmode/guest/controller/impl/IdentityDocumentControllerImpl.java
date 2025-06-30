@@ -54,8 +54,8 @@ public class IdentityDocumentControllerImpl implements IdentityDocumentControlle
     }
 
     @Override
-    public ResponseEntity<IdentityDocumentItemGetResource> updateIdDocument(String identityDocumentId, IdDocumentPatchResource idDocumentPatchResource) {
-        return identityDocumentService.updateById(identityDocumentId, idDocumentPatchResource);
+    public ResponseEntity<IdentityDocumentItemGetResource> updateIdDocument(String identityDocumentId, IdDocumentPatchResource idDocumentPatchResource, MultipartFile documentImage) {
+        return identityDocumentService.updateById(identityDocumentId, idDocumentPatchResource, documentImage);
     }
 
     /**

@@ -7,6 +7,7 @@ package com.smsmode.guest.mapper;
 import com.smsmode.guest.model.IdentityDocumentModel;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import com.smsmode.guest.resource.common.AuditGetResource;
+import com.smsmode.guest.resource.guest.GuestIdDocumentPostResource;
 import com.smsmode.guest.resource.iddocument.IdDocumentPatchResource;
 import com.smsmode.guest.resource.iddocument.IdentityDocumentItemGetResource;
 import com.smsmode.guest.resource.iddocument.IdentityDocumentPostResource;
@@ -32,6 +33,9 @@ public abstract class IdentityDocumentMapper {
      */
     @Mapping(target = "guest", ignore = true)
     public abstract IdentityDocumentModel postResourceToModel(IdentityDocumentPostResource identityDocumentPostResource);
+
+    @Mapping(target = "guest", ignore = true)
+    public abstract IdentityDocumentModel postResourceToModel(GuestIdDocumentPostResource identityDocumentPostResource);
 
     /**
      * Maps IdentificationDocumentModel to IdDocumentGetResource for retrieval.

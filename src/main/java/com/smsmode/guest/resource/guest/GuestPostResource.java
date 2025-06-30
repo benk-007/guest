@@ -30,5 +30,5 @@ public class GuestPostResource {
 
 
     @Valid
-    private IdentityDocumentPostResource identityDocument;
+    private GuestIdDocumentPostResource identityDocument;
 }

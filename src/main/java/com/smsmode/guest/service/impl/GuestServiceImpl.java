@@ -9,6 +9,7 @@ import com.smsmode.guest.dao.service.IdentityDocumentDaoService;
 import com.smsmode.guest.dao.specification.GuestSpecification;
 import com.smsmode.guest.dao.specification.IdentityDocumentSpecification;
 import com.smsmode.guest.mapper.GuestMapper;
+import com.smsmode.guest.mapper.IdentityDocumentMapper;
 import com.smsmode.guest.model.GuestModel;
 import com.smsmode.guest.model.IdentityDocumentModel;
 import com.smsmode.guest.resource.guest.GuestItemGetResource;
@@ -43,13 +44,15 @@ public class GuestServiceImpl implements GuestService {
     private final GuestDaoService guestDaoService;
     private final IdentityDocumentService identityDocumentService;
     private final IdentityDocumentDaoService identityDocumentDaoService;
+    private final IdentityDocumentMapper identityDocumentMapper;
 
     @Override
     @Transactional
     public ResponseEntity<GuestItemGetResource> create(GuestPostResource guestPostResource, MultipartFile identityDocumentFile) {
         GuestModel guestModel = guestMapper.postResourceToModel(guestPostResource);
         guestModel = guestDaoService.save(guestModel);
-        identityDocumentService.create(guestModel, guestPostResource.getIdentityDocument(), identityDocumentFile);
+        IdentityDocumentModel identityDocumentModel = identityDocumentMapper.postResourceToModel(guestPostResource.getIdentityDocument());
+        identityDocumentService.create(guestModel, identityDocumentModel, identityDocumentFile);
         return ResponseEntity.created(URI.create("")).body(guestMapper.modelToGetResource(guestModel));
     }
 
