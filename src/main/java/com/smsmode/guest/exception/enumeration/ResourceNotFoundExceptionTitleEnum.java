@@ -18,7 +18,8 @@ public enum ResourceNotFoundExceptionTitleEnum implements BaseExceptionEnum {
      */
     GUEST_NOT_FOUND("GST_RNF_ERR_1"),
     ID_DOCUMENT_NOT_FOUND("GST_RNF_ERR_2"),
-    IMAGE_NOT_FOUND("GST_RNF_ERR_3");
+    IMAGE_NOT_FOUND("GST_RNF_ERR_3"),
+    SEGMENT_NOT_FOUND("CRM_RNF_ERR_4");
 
 
 
