@@ -6,6 +6,8 @@ package com.smsmode.guest.service.impl;
 
 import com.smsmode.guest.dao.service.SegmentDaoService;
 import com.smsmode.guest.dao.specification.SegmentSpecification;
+import com.smsmode.guest.exception.ConflictException;
+import com.smsmode.guest.exception.enumeration.ConflictExceptionTitleEnum;
 import com.smsmode.guest.mapper.SegmentMapper;
 import com.smsmode.guest.model.SegmentModel;
 import com.smsmode.guest.resource.segment.SegmentGetResource;
@@ -13,6 +15,7 @@ import com.smsmode.guest.resource.segment.SegmentItemGetResource;
 import com.smsmode.guest.resource.segment.SegmentPatchResource;
 import com.smsmode.guest.resource.segment.SegmentPostResource;
 import com.smsmode.guest.service.SegmentService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -39,9 +42,10 @@ public class SegmentServiceImpl implements SegmentService {
     private final SegmentDaoService segmentDaoService;
 
     @Override
-    public ResponseEntity<Page<SegmentItemGetResource>> retrieveAllByPage(String search, Pageable pageable) {
+    public ResponseEntity<Page<SegmentItemGetResource>> retrieveAllByPage(String search, Boolean withParent, Pageable pageable) {
         log.debug("Building segment specification with search value: {} ...", search);
-        Specification<SegmentModel> specification = Specification.where(null);
+        Specification<SegmentModel> specification = Specification.where(SegmentSpecification.withNameLike(search))
+                .and(SegmentSpecification.withParent(withParent));
         log.debug("Retrieve page: {} of segment(s) from database ...", pageable.getPageNumber());
         Page<SegmentModel> segmentModelPage = segmentDaoService.findAllBy(specification, pageable);
         log.info("Segments retrieved from database successfully. Returned {} elements.", segmentModelPage.getSize());
@@ -92,10 +96,13 @@ public class SegmentServiceImpl implements SegmentService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<SegmentGetResource> updateById(String segmentId, SegmentPatchResource segmentPatchResource) {
         log.debug("Retrieving segment model from database by Id: {} ...", segmentId);
         SegmentModel segmentModel = segmentDaoService.findOneBy(SegmentSpecification.withIdEqual(segmentId));
         log.info("Segment model retrieved successfully");
+        this.validateSegmentParenting(segmentId, segmentPatchResource.getParentId());
+        //TODO: check if there's any price plans related to this segment in case of major changes
         log.debug("Mapping patch resource to segment model ...");
         segmentModel = segmentMapper.patchResourceToModel(segmentPatchResource, segmentModel);
         log.info("Segment model after mapping: {}", segmentModel);
@@ -122,6 +129,9 @@ public class SegmentServiceImpl implements SegmentService {
             }
         }
         segmentModel = segmentDaoService.save(segmentModel);
+        if (!segmentModel.isEnabled()) {
+            segmentDaoService.disabledChildrenOfSegment(segmentId);
+        }
         return ResponseEntity.ok(segmentMapper.modelToGetResource(segmentModel));
     }
 
@@ -129,5 +139,25 @@ public class SegmentServiceImpl implements SegmentService {
     public ResponseEntity<Void> removeById(String segmentId) {
         segmentDaoService.deleteById(segmentId);
         return ResponseEntity.noContent().build();
+    }
+
+    private void validateSegmentParenting(String segmentId, String parentSegmentId) {
+        log.debug("Parent segment Id is provided. Will check if the parent segment already have a parent ...");
+        if (!ObjectUtils.isEmpty(parentSegmentId) && !parentSegmentId.isBlank()) {
+            if (segmentDaoService.existsBy(SegmentSpecification.withIdEqual(parentSegmentId).and(SegmentSpecification.withParent(true)))) {
+                log.warn("The parent segment id provided already have a parent, therefore it can't have siblings. Will throw an error ...");
+                throw new ConflictException(ConflictExceptionTitleEnum.SEGMENT_PARENT_LIMIT, "Segment parent already have a parent and can't have children");
+            }
+            if (!ObjectUtils.isEmpty(segmentId)) {
+                if (segmentId.equals(parentSegmentId)) {
+                    throw new ConflictException(ConflictExceptionTitleEnum.SEGMENT_CIRCULAR_TREE, "You can't assign a segment to itself as a parent");
+                }
+                if (segmentDaoService.existsBy(SegmentSpecification.withParentIdEqual(segmentId))) {
+                    throw new ConflictException(ConflictExceptionTitleEnum.SEGMENT_PARENT_LIMIT, "This segment is already defined as a parent and therefore can't have a parent");
+                }
+            }
+        }
+
+
     }
 }

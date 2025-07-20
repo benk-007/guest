@@ -27,4 +27,6 @@ public interface SegmentDaoService {
 
     void deleteById(String segmentId);
 
+    void disabledChildrenOfSegment(String segmentId);
+
 }

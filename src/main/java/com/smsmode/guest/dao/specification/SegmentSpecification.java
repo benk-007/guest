@@ -6,7 +6,9 @@ package com.smsmode.guest.dao.specification;
 
 import com.smsmode.guest.model.SegmentModel;
 import com.smsmode.guest.model.SegmentModel_;
+import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.ObjectUtils;
 
 /**
  * TODO: add your documentation
@@ -22,9 +24,27 @@ public class SegmentSpecification {
     }
 
     public static Specification<SegmentModel> withParent(Boolean withParent) {
+        return (root, query, criteriaBuilder) -> {
+            if (withParent == null) {
+                return criteriaBuilder.conjunction();
+            } else {
+                return withParent ? criteriaBuilder.isNotNull(root.get(SegmentModel_.parent)) :
+                        criteriaBuilder.isNull(root.get(SegmentModel_.parent));
+            }
+        };
+    }
+
+    public static Specification<SegmentModel> withNameLike(String search) {
         return (root, query, criteriaBuilder) ->
-                withParent == null ? criteriaBuilder.conjunction() :
-                        ((withParent.booleanValue()) ? criteriaBuilder.isNotNull(root.get(SegmentModel_.parent)) :
-                                criteriaBuilder.isNull(root.get(SegmentModel_.parent)));
+                ObjectUtils.isEmpty(search) ? criteriaBuilder.conjunction() :
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get(SegmentModel_.name)),
+                                "%" + search.toLowerCase() + "%");
+    }
+
+    public static Specification<SegmentModel> withParentIdEqual(String parentId) {
+        return (root, query, criteriaBuilder) -> {
+            Join<SegmentModel, SegmentModel> parentJoin = root.join(SegmentModel_.parent);
+            return criteriaBuilder.equal(parentJoin.get(SegmentModel_.id), parentId);
+        };
     }
 }

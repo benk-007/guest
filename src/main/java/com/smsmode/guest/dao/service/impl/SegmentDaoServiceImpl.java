@@ -9,6 +9,7 @@ import com.smsmode.guest.dao.service.SegmentDaoService;
 import com.smsmode.guest.exception.ResourceNotFoundException;
 import com.smsmode.guest.exception.enumeration.ResourceNotFoundExceptionTitleEnum;
 import com.smsmode.guest.model.SegmentModel;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -58,5 +59,11 @@ public class SegmentDaoServiceImpl implements SegmentDaoService {
     @Override
     public void deleteById(String segmentId) {
         segmentRepository.deleteById(segmentId);
+    }
+
+    @Override
+    @Transactional
+    public void disabledChildrenOfSegment(String segmentId) {
+        segmentRepository.disableSegmentsByParentId(segmentId);
     }
 }

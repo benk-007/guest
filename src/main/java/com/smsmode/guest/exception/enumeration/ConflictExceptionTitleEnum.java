@@ -13,7 +13,8 @@ package com.smsmode.guest.exception.enumeration;
  * <p>Created 13 Mar 2025
  */
 public enum ConflictExceptionTitleEnum implements BaseExceptionEnum {
-    PASSWORD_MISMATCH("UAA_CFT_ERR_1");
+    SEGMENT_PARENT_LIMIT("CRM_CFT_ERR_1"),
+    SEGMENT_CIRCULAR_TREE("CRM_CFT_ERR_2");
     private final String code;
 
     /**

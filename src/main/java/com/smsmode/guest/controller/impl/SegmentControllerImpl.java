@@ -31,8 +31,8 @@ public class SegmentControllerImpl implements SegmentController {
     private final SegmentService segmentService;
 
     @Override
-    public ResponseEntity<Page<SegmentItemGetResource>> getAll(String search, Pageable pageable) {
-        return segmentService.retrieveAllByPage(search, pageable);
+    public ResponseEntity<Page<SegmentItemGetResource>> getAll(String search, Boolean withParent, Pageable pageable) {
+        return segmentService.retrieveAllByPage(search, withParent, pageable);
     }
 
     @Override

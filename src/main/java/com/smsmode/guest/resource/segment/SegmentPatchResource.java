@@ -17,4 +17,5 @@ public class SegmentPatchResource {
     private String name;
     private String description;
     private String parentId;
+    private Boolean enabled;
 }
