@@ -26,6 +26,7 @@ public interface SegmentController {
     @GetMapping
     ResponseEntity<Page<SegmentItemGetResource>> getAll(@RequestParam(value = "search", required = false) String search,
                                                         @RequestParam(value = "withParent", required = false) Boolean withParent,
+                                                        @RequestParam(value = "enabled", required = false) Boolean enabled,
                                                         Pageable pageable);
 
     @GetMapping("/{segmentId}")

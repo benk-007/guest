@@ -19,7 +19,7 @@ import org.springframework.http.ResponseEntity;
  * <p>Created 18 Jul 2025</p>
  */
 public interface SegmentService {
-    ResponseEntity<Page<SegmentItemGetResource>> retrieveAllByPage(String search, Boolean withParent, Pageable pageable);
+    ResponseEntity<Page<SegmentItemGetResource>> retrieveAllByPage(String search, Boolean withParent, Boolean enabled, Pageable pageable);
 
     ResponseEntity<SegmentGetResource> retrieveById(String segmentId);
 

@@ -42,10 +42,12 @@ public class SegmentServiceImpl implements SegmentService {
     private final SegmentDaoService segmentDaoService;
 
     @Override
-    public ResponseEntity<Page<SegmentItemGetResource>> retrieveAllByPage(String search, Boolean withParent, Pageable pageable) {
+    public ResponseEntity<Page<SegmentItemGetResource>> retrieveAllByPage(String search, Boolean withParent,Boolean enabled, Pageable pageable) {
         log.debug("Building segment specification with search value: {} ...", search);
-        Specification<SegmentModel> specification = Specification.where(SegmentSpecification.withNameLike(search))
-                .and(SegmentSpecification.withParent(withParent));
+        Specification<SegmentModel> specification = Specification
+                .where(SegmentSpecification.withNameLike(search))
+                .and(SegmentSpecification.withParent(withParent))
+                .and(SegmentSpecification.withEnabled(enabled));;
         log.debug("Retrieve page: {} of segment(s) from database ...", pageable.getPageNumber());
         Page<SegmentModel> segmentModelPage = segmentDaoService.findAllBy(specification, pageable);
         log.info("Segments retrieved from database successfully. Returned {} elements.", segmentModelPage.getSize());
