@@ -47,7 +47,7 @@ public class SegmentServiceImpl implements SegmentService {
         Specification<SegmentModel> specification = Specification
                 .where(SegmentSpecification.withNameLike(search))
                 .and(SegmentSpecification.withParent(withParent))
-                .and(SegmentSpecification.withEnabled(enabled));;
+                .and(SegmentSpecification.withEnabled(enabled));
         log.debug("Retrieve page: {} of segment(s) from database ...", pageable.getPageNumber());
         Page<SegmentModel> segmentModelPage = segmentDaoService.findAllBy(specification, pageable);
         log.info("Segments retrieved from database successfully. Returned {} elements.", segmentModelPage.getSize());
