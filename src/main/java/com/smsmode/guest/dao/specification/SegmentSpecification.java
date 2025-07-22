@@ -34,6 +34,17 @@ public class SegmentSpecification {
         };
     }
 
+    public static Specification<SegmentModel> withEnabled(Boolean enabled) {
+        return (root, query, criteriaBuilder) -> {
+            if (enabled == null) {
+                return criteriaBuilder.conjunction();
+            } else {
+                return criteriaBuilder.equal(root.get(SegmentModel_.enabled), enabled);
+            }
+        };
+    }
+
+
     public static Specification<SegmentModel> withNameLike(String search) {
         return (root, query, criteriaBuilder) ->
                 ObjectUtils.isEmpty(search) ? criteriaBuilder.conjunction() :
