@@ -18,7 +18,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "SEGMENT")
+@Table(name = "NZ_SEGMENT")
 public class SegmentModel extends AbstractBaseModel {
     private String name;
     private String description;

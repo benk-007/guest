@@ -24,7 +24,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Table(name = "X_DOCUMENT")
+@Table(name = "NZ_DOCUMENT")
 public class DocumentModel extends AbstractBaseModel {
     @Enumerated(EnumType.STRING)
     private IdDocumentTypeEnum type;
