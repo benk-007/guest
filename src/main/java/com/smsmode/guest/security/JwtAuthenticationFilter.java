@@ -52,9 +52,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * request, check its integrity and set necessary information in it in {@link UserContextHolder}
      * class to be used during the request lifecycle.
      *
-     * @param request  Http request
-     * @param response Http response
-     * @param filterChain         Chain of a filtered request for a resource
+     * @param request     Http request
+     * @param response    Http response
+     * @param filterChain Chain of a filtered request for a resource
      * @throws ServletException if error occurs
      * @throws IOException      if error occurs
      */

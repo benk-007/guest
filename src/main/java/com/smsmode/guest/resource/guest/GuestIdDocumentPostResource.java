@@ -4,7 +4,7 @@
  */
 package com.smsmode.guest.resource.guest;
 
-import com.smsmode.guest.enumeration.IdentityDocumentTypeEnum;
+import com.smsmode.guest.enumeration.IdDocumentTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @Data
 public class GuestIdDocumentPostResource {
     @NotNull
-    private IdentityDocumentTypeEnum type;
+    private IdDocumentTypeEnum type;
     @NotBlank
     private String value;
     @NotNull

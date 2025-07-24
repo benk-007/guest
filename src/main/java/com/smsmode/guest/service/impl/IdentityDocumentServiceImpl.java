@@ -5,42 +5,36 @@
 package com.smsmode.guest.service.impl;
 
 import com.smsmode.guest.dao.service.DocumentDaoService;
-import com.smsmode.guest.dao.service.GuestDaoService;
-import com.smsmode.guest.dao.service.IdentityDocumentDaoService;
-import com.smsmode.guest.dao.specification.GuestSpecification;
-import com.smsmode.guest.dao.specification.IdentityDocumentSpecification;
+import com.smsmode.guest.dao.service.PartyDaoService;
+import com.smsmode.guest.dao.specification.DocumentSpecification;
+import com.smsmode.guest.dao.specification.PartySpecification;
+import com.smsmode.guest.embeddable.MediaRefEmbeddable;
 import com.smsmode.guest.exception.InternalServerException;
-import com.smsmode.guest.exception.ResourceNotFoundException;
 import com.smsmode.guest.exception.enumeration.InternalServerExceptionTitleEnum;
-import com.smsmode.guest.exception.enumeration.ResourceNotFoundExceptionTitleEnum;
 import com.smsmode.guest.mapper.IdentityDocumentMapper;
-import com.smsmode.guest.model.GuestModel;
-import com.smsmode.guest.model.IdentityDocumentModel;
+import com.smsmode.guest.model.DocumentModel;
+import com.smsmode.guest.model.PartyModel;
 import com.smsmode.guest.resource.iddocument.IdDocumentPatchResource;
 import com.smsmode.guest.resource.iddocument.IdentityDocumentItemGetResource;
 import com.smsmode.guest.resource.iddocument.IdentityDocumentPostResource;
+import com.smsmode.guest.resource.media.MediaGetResource;
 import com.smsmode.guest.service.IdentityDocumentService;
-import com.smsmode.guest.service.StorageService;
+import com.smsmode.guest.service.feign.MediaFeignService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * TODO: add your documentation
@@ -53,18 +47,12 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class IdentityDocumentServiceImpl implements IdentityDocumentService {
 
-    private final IdentityDocumentDaoService identityDocumentDaoService;
-    private final IdentityDocumentMapper identityDocumentMapper;
-    private final GuestDaoService guestDaoService;
     private final DocumentDaoService documentDaoService;
-    private final StorageService storageService;
-
-    @Override
-    public ResponseEntity<Page<IdentityDocumentItemGetResource>> retrieveAllByGuestId(String guestId, String search, Pageable pageable) {
-        Specification<IdentityDocumentModel> spec = IdentityDocumentSpecification.withGuestId(guestId).and(IdentityDocumentSpecification.withValueLike(search));
-        Page<IdentityDocumentModel> idDocuments = identityDocumentDaoService.findAllBy(spec, pageable);
-        return ResponseEntity.ok(idDocuments.map(identityDocumentMapper::modelToItemGetResource));
-    }
+    private final IdentityDocumentMapper identityDocumentMapper;
+    private final PartyDaoService partyDaoService;
+    private final MediaFeignService mediaFeignService;
+    @Value("${file.upload.identity-document}")
+    public String identityDocumentPath;
 
     /**
      * Création avec support images multipart
@@ -72,89 +60,64 @@ public class IdentityDocumentServiceImpl implements IdentityDocumentService {
     @Override
     @Transactional
     public ResponseEntity<IdentityDocumentItemGetResource> create(IdentityDocumentPostResource idDocumentPostResource, MultipartFile identityDocumentFile) {
-        GuestModel guest = guestDaoService.findOneBy(GuestSpecification.withIdEqual(idDocumentPostResource.getGuestId()));
-        IdentityDocumentModel identityDocumentModel = identityDocumentMapper.postResourceToModel(idDocumentPostResource);
-        identityDocumentModel = this.create(guest, identityDocumentModel, identityDocumentFile);
-        return ResponseEntity.created(URI.create("")).body(identityDocumentMapper.modelToItemGetResource(identityDocumentModel));
+        PartyModel party = partyDaoService.findOneBy(PartySpecification.withIdEqual(idDocumentPostResource.getPartyId()));
+        DocumentModel documentModel = identityDocumentMapper.postResourceToModel(idDocumentPostResource);
+        documentModel = this.create(party, documentModel, identityDocumentFile);
+        return ResponseEntity.created(URI.create("")).body(identityDocumentMapper.modelToItemGetResource(documentModel));
     }
 
     @Override
     @Transactional
-    public IdentityDocumentModel create(GuestModel guestModel, IdentityDocumentModel identityDocumentModel, MultipartFile identityDocumentFile) {
-        if (!ObjectUtils.isEmpty(identityDocumentModel)) {
-            identityDocumentModel.setGuest(guestModel);
-            identityDocumentModel = identityDocumentDaoService.save(identityDocumentModel);
+    public DocumentModel create(PartyModel partyModel, DocumentModel documentModel, MultipartFile identityDocumentFile) {
+        if (!ObjectUtils.isEmpty(documentModel)) {
+            documentModel.setParty(partyModel);
+            documentModel = documentDaoService.save(documentModel);
             if (!ObjectUtils.isEmpty(identityDocumentFile) && !identityDocumentFile.isEmpty()) {
-                identityDocumentModel.setFileName(identityDocumentFile.getOriginalFilename());
-                identityDocumentModel = identityDocumentDaoService.save(identityDocumentModel);
-                String identityDocumentPath = storageService.generateDocumentPath(identityDocumentModel);
-                try {
-                    String identityDocumentFileName = storageService.storeFile(identityDocumentPath, identityDocumentFile.getInputStream());
-
-                    if (ObjectUtils.isEmpty(identityDocumentFileName)) {
-                        throw new InternalServerException(InternalServerExceptionTitleEnum.FILE_UPLOAD, "An unexpected error occurred while saving the identity document file. Please try again later.");
-                    }
-                } catch (IOException e) {
-                    log.warn("An error occurred when storing image file", e);
-                    throw new InternalServerException(InternalServerExceptionTitleEnum.FILE_UPLOAD, "An unexpected error occurred while saving the image. Please try again later.");
+                String filePath = identityDocumentPath.replace(":guestId", partyModel.getId());
+                ResponseEntity<List<MediaGetResource>> mediaResponse = mediaFeignService.uploadMedia(filePath, Stream.of(identityDocumentFile).toArray(MultipartFile[]::new));
+                List<MediaGetResource> mediaList = mediaResponse.getBody();
+                if (mediaList == null || mediaList.isEmpty()) {
+                    throw new InternalServerException(
+                            InternalServerExceptionTitleEnum.FILE_UPLOAD,
+                            "Media upload failed or returned no files.");
                 }
+                MediaRefEmbeddable media = new MediaRefEmbeddable();
+                media.setId(mediaList.getFirst().getId());
+                documentModel.setMedia(media);
+                documentModel = documentDaoService.save(documentModel);
             }
-            return identityDocumentModel;
+            return documentModel;
         } else {
-            log.debug("No identity document provided for guest: {}", guestModel.getId());
+            log.debug("No document provided for party: {}", partyModel.getId());
             return null;
         }
 
     }
 
-
     @Override
-    public ResponseEntity<IdentityDocumentItemGetResource> retrieveById(String identityDocumentId) {
-        Specification<IdentityDocumentModel> spec = Specification.where(
-                IdentityDocumentSpecification.withId(identityDocumentId));
-        IdentityDocumentModel identityDocumentModel = identityDocumentDaoService.findOneBy(spec);
-        return ResponseEntity.ok(identityDocumentMapper.modelToItemGetResource(identityDocumentModel));
+    public ResponseEntity<Page<IdentityDocumentItemGetResource>> retrieveAllByGuestId(String guestId, String search, Pageable pageable) {
+        Specification<DocumentModel> spec = DocumentSpecification.withPartyId(guestId).and(DocumentSpecification.withValueLike(search));
+        Page<DocumentModel> idDocuments = documentDaoService.findAllBy(spec, pageable);
+        return ResponseEntity.ok(idDocuments.map(identityDocumentMapper::modelToItemGetResource));
     }
 
     @Override
-    public ResponseEntity<Resource> retrieveImageById(String identityDocumentId) {
-        Specification<IdentityDocumentModel> spec = Specification.where(
-                IdentityDocumentSpecification.withId(identityDocumentId));
-        IdentityDocumentModel identityDocumentModel = identityDocumentDaoService.findOneBy(spec);
-        String imagePath = storageService.generateDocumentPath(identityDocumentModel);
-        File file = new File(imagePath);
-        if (file.exists()) {
-            log.debug("file exists");
-            Resource resource = null;
-            try {
-                byte[] bytes = FileUtils.readFileToByteArray(file);
-                resource = new InputStreamResource(new ByteArrayInputStream(bytes));
-            } catch (IOException e) {
-                log.debug("An error has been thrown while to convert {} to byte stream", file);
-                throw new InternalServerException(InternalServerExceptionTitleEnum.FILE_UPLOAD, "An error occurred while trying convert file to byte stream");
-            }
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_TYPE, MediaType.IMAGE_JPEG_VALUE)
-                    .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=" + identityDocumentModel.getFileName())
-                    .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
-                    .body(resource);
-        } else {
-            throw new ResourceNotFoundException(
-                    ResourceNotFoundExceptionTitleEnum.IMAGE_NOT_FOUND,
-                    "No image found with the specified criteria");
-        }
+    public ResponseEntity<IdentityDocumentItemGetResource> retrieveById(String identityDocumentId) {
+        Specification<DocumentModel> spec = Specification.where(
+                DocumentSpecification.withId(identityDocumentId));
+        DocumentModel documentModel = documentDaoService.findOneBy(spec);
+        return ResponseEntity.ok(identityDocumentMapper.modelToItemGetResource(documentModel));
     }
 
     @Override
     @Transactional
-    public ResponseEntity<IdentityDocumentItemGetResource> updateById(String identityDocumentId, IdDocumentPatchResource idDocumentPatchResource, MultipartFile documentImage) {
-        log.debug("Updating identity document: {}", identityDocumentId);
-        Specification<IdentityDocumentModel> spec = Specification.where(
-                IdentityDocumentSpecification.withId(identityDocumentId));
-        IdentityDocumentModel existingIdDocument = identityDocumentDaoService.findOneBy(spec);
-        IdentityDocumentModel updatedIdDocument = identityDocumentMapper.patchResourceToModel(idDocumentPatchResource, existingIdDocument);
-        updatedIdDocument = this.create(updatedIdDocument.getGuest(), updatedIdDocument, documentImage);
+    public ResponseEntity<IdentityDocumentItemGetResource> updateById(String documentId, IdDocumentPatchResource idDocumentPatchResource, MultipartFile documentImage) {
+        log.debug("Updating document: {}", documentId);
+        Specification<DocumentModel> spec = Specification.where(
+                DocumentSpecification.withId(documentId));
+        DocumentModel existingIdDocument = documentDaoService.findOneBy(spec);
+        DocumentModel updatedIdDocument = identityDocumentMapper.patchResourceToModel(idDocumentPatchResource, existingIdDocument);
+        updatedIdDocument = this.create(updatedIdDocument.getParty(), updatedIdDocument, documentImage);
         return ResponseEntity.ok(identityDocumentMapper.modelToItemGetResource(updatedIdDocument));
     }
 
@@ -163,13 +126,20 @@ public class IdentityDocumentServiceImpl implements IdentityDocumentService {
      */
     @Override
     @Transactional
-    public ResponseEntity<Void> deleteByIdWithImages(String idDocumentId) {
-        Specification<IdentityDocumentModel> spec = Specification.where(
-                IdentityDocumentSpecification.withId(idDocumentId));
-        IdentityDocumentModel identityDocumentModel = identityDocumentDaoService.findOneBy(spec);
-        String imagePath = storageService.generateDocumentPath(identityDocumentModel);
-        storageService.deleteFile(imagePath);
-        identityDocumentDaoService.delete(identityDocumentModel);
+    public ResponseEntity<Void> deleteById(String idDocumentId) {
+        Specification<DocumentModel> spec = Specification.where(
+                DocumentSpecification.withId(idDocumentId));
+        DocumentModel documentModel = documentDaoService.findOneBy(spec);
+        //call media service to delete media file
+        try {
+            mediaFeignService.deleteMediaById(documentModel.getMedia().getId());
+        } catch (Exception e) {
+            log.warn("Failed to delete media in Media service. Aborting deletion.");
+            throw new InternalServerException(
+                    InternalServerExceptionTitleEnum.FILE_UPLOAD,
+                    "Unable to delete image from media storage.");
+        }
+        documentDaoService.delete(documentModel);
         return ResponseEntity.noContent().build();
     }
 }

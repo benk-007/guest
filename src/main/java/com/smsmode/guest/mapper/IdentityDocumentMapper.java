@@ -4,7 +4,7 @@
  */
 package com.smsmode.guest.mapper;
 
-import com.smsmode.guest.model.IdentityDocumentModel;
+import com.smsmode.guest.model.DocumentModel;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import com.smsmode.guest.resource.common.AuditGetResource;
 import com.smsmode.guest.resource.guest.GuestIdDocumentPostResource;
@@ -31,22 +31,22 @@ public abstract class IdentityDocumentMapper {
     /**
      * Maps IdDocumentPostResource to IdentificationDocumentModel for creation.
      */
-    @Mapping(target = "guest", ignore = true)
-    public abstract IdentityDocumentModel postResourceToModel(IdentityDocumentPostResource identityDocumentPostResource);
+    @Mapping(target = "party", ignore = true)
+    public abstract DocumentModel postResourceToModel(IdentityDocumentPostResource identityDocumentPostResource);
 
-    @Mapping(target = "guest", ignore = true)
-    public abstract IdentityDocumentModel postResourceToModel(GuestIdDocumentPostResource identityDocumentPostResource);
+    @Mapping(target = "party", ignore = true)
+    public abstract DocumentModel postResourceToModel(GuestIdDocumentPostResource identityDocumentPostResource);
 
     /**
      * Maps IdentificationDocumentModel to IdDocumentGetResource for retrieval.
      */
-    public abstract IdentityDocumentItemGetResource modelToItemGetResource(IdentityDocumentModel identityDocumentModel);
+    public abstract IdentityDocumentItemGetResource modelToItemGetResource(DocumentModel documentModel);
 
     /**
      * Maps IdDocumentPatchResource to IdentificationDocumentModel for partial updates.
      */
-    @Mapping(target = "guest", ignore = true)
-    public abstract IdentityDocumentModel patchResourceToModel(IdDocumentPatchResource idDocumentPatchResource, @MappingTarget IdentityDocumentModel idDocumentModel);
+    @Mapping(target = "party", ignore = true)
+    public abstract DocumentModel patchResourceToModel(IdDocumentPatchResource idDocumentPatchResource, @MappingTarget DocumentModel idDocumentModel);
 
     /**
      * Maps AbstractBaseModel to AuditGetResource for audit information.
@@ -57,8 +57,8 @@ public abstract class IdentityDocumentMapper {
      * After mapping method to set audit information.
      */
     @AfterMapping
-    public void afterModelToItemGetResource(IdentityDocumentModel identityDocumentModel, @MappingTarget IdentityDocumentItemGetResource identityDocumentItemGetResource) {
-        identityDocumentItemGetResource.setFileProvided(!ObjectUtils.isEmpty(identityDocumentModel));
-        identityDocumentItemGetResource.setAudit(this.modelToAuditResource(identityDocumentModel));
+    public void afterModelToItemGetResource(DocumentModel documentModel, @MappingTarget IdentityDocumentItemGetResource identityDocumentItemGetResource) {
+        identityDocumentItemGetResource.setFileProvided(!ObjectUtils.isEmpty(documentModel));
+        identityDocumentItemGetResource.setAudit(this.modelToAuditResource(documentModel));
     }
 }

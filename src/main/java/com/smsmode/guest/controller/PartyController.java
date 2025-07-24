@@ -1,8 +1,8 @@
 package com.smsmode.guest.controller;
 
-import com.smsmode.guest.resource.guest.GuestItemGetResource;
+import com.smsmode.guest.resource.guest.PartyItemGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
-import com.smsmode.guest.resource.guest.GuestPostResource;
+import com.smsmode.guest.resource.guest.PartyPostResource;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,37 +16,39 @@ import org.springframework.web.multipart.MultipartFile;
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
  * <p>Created 16 Jun 2025</p>
  */
-@RequestMapping("/guests")
-public interface GuestController {
+@RequestMapping("/parties")
+public interface PartyController {
 
     /**
      * Creates a new guest with optional documents and images.
      * Handles all cases: guest alone, guest+idDocument, guest+idDocument+images
      */
     @PostMapping(consumes = "multipart/form-data")
-    ResponseEntity<GuestItemGetResource> createGuest(
-            @RequestPart("payload") @Valid GuestPostResource guestPostResource,
-            @RequestPart(value = "file", required = false) MultipartFile documentImages);
-
+    ResponseEntity<PartyItemGetResource> post(
+            @RequestPart("payload") @Valid PartyPostResource partyPostResource,
+            @RequestPart(value = "file", required = false) MultipartFile identityDocument);
 
     /**
      * Retrieves all guests with optional search and pagination.
      */
+
     @GetMapping
-    ResponseEntity<Page<GuestItemGetResource>> getAllGuests(
+    ResponseEntity<Page<PartyItemGetResource>> getAllByPage(
             @RequestParam(value = "search", required = false) String search,
             Pageable pageable);
+
 
     /* Retrieves a guest by ID.
      */
     @GetMapping("/{guestId}")
-    ResponseEntity<GuestItemGetResource> getGuestById(@PathVariable("guestId") String guestId);
+    ResponseEntity<PartyItemGetResource> getById(@PathVariable("guestId") String guestId);
 
     /**
      * Updates a guest partially.
      */
+
     @PatchMapping("/{guestId}")
-    ResponseEntity<GuestItemGetResource> updateGuest(
+    ResponseEntity<PartyItemGetResource> patchById(
             @PathVariable("guestId") String guestId,
             @RequestBody @Valid GuestPatchResource guestPatchResource);
 
@@ -54,7 +56,6 @@ public interface GuestController {
      * Deletes a guest.
      */
     @DeleteMapping("/{guestId}")
-    ResponseEntity<Void> deleteGuest(@PathVariable("guestId") String guestId);
-
+    ResponseEntity<Void> deleteById(@PathVariable("guestId") String guestId);
 
 }

@@ -1,6 +1,6 @@
 package com.smsmode.guest.dao.repository;
 
-import com.smsmode.guest.model.GuestModel;
+import com.smsmode.guest.model.PartyModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -13,5 +13,5 @@ import org.springframework.stereotype.Repository;
  * <p>Created 16 Jun 2025</p>
  */
 @Repository
-public interface GuestRepository extends JpaRepository<GuestModel, String>, JpaSpecificationExecutor<GuestModel> {
+public interface PartyRepository extends JpaRepository<PartyModel, String>, JpaSpecificationExecutor<PartyModel> {
 }

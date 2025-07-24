@@ -6,22 +6,24 @@ package com.smsmode.guest.dao.specification;
 
 import com.smsmode.guest.model.DocumentModel;
 import com.smsmode.guest.model.DocumentModel_;
-import com.smsmode.guest.model.IdentityDocumentModel;
-import com.smsmode.guest.model.IdentityDocumentModel_;
+import com.smsmode.guest.model.PartyModel;
+import com.smsmode.guest.model.PartyModel_;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.ObjectUtils;
 
 /**
- * TODO: add your documentation
+ * Specification class for IdentificationDocument entity queries.
  *
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
- * <p>Created 20 May 2025</p>
+ * <p>Created 16 Jun 2025</p>
  */
 public class DocumentSpecification {
-    public static Specification<DocumentModel> withIdentityDocumentId(String identityDocumentId) {
+
+    public static Specification<DocumentModel> withPartyId(String partyId) {
         return (root, query, criteriaBuilder) -> {
-            Join<DocumentModel, IdentityDocumentModel> join = root.join(DocumentModel_.identityDocument);
-            return criteriaBuilder.equal(join.get(IdentityDocumentModel_.id), identityDocumentId);
+            Join<DocumentModel, PartyModel> join = root.join(DocumentModel_.party);
+            return criteriaBuilder.equal(join.get(PartyModel_.id), partyId);
         };
     }
 
@@ -29,4 +31,13 @@ public class DocumentSpecification {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get(DocumentModel_.id), documentId);
     }
+
+    public static Specification<DocumentModel> withValueLike(String value) {
+        return (root, query, criteriaBuilder) ->
+                ObjectUtils.isEmpty(value) ? criteriaBuilder.conjunction() :
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get(DocumentModel_.value)),
+                                "%".concat(value.toLowerCase()).concat("%"));
+
+    }
+
 }

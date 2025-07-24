@@ -4,17 +4,21 @@
  */
 package com.smsmode.guest.model;
 
+import com.smsmode.guest.embeddable.MediaRefEmbeddable;
+import com.smsmode.guest.enumeration.IdDocumentTypeEnum;
 import com.smsmode.guest.model.base.AbstractBaseModel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 /**
- * TODO: add your documentation
+ * Entity representing an identification document for a guest.
  *
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
- * <p>Created 19 May 2025</p>
+ * <p>Created 16 Jun 2025</p>
  */
 @NoArgsConstructor
 @Getter
@@ -22,9 +26,17 @@ import lombok.Setter;
 @Entity
 @Table(name = "X_DOCUMENT")
 public class DocumentModel extends AbstractBaseModel {
-    private String fileName;
+    @Enumerated(EnumType.STRING)
+    private IdDocumentTypeEnum type;
+
+    private String value;
+
+    private LocalDate expirationDate;
+
+    @Embedded
+    @AttributeOverride(name = "id", column = @Column(name = "MEDIA_ID"))
+    private MediaRefEmbeddable media;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IDENTITY_DOCUMENT_ID")
-    private IdentityDocumentModel identityDocument;
+    private PartyModel party;
 }

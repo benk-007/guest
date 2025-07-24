@@ -8,10 +8,7 @@ package com.smsmode.guest.service;
  * TODO: add your documentation
  *
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
- * <p>Created 22 Jul 2025</p>
+ * <p>Created 23 Jul 2025</p>
  */
-public interface DataLoaderService {
-
-    void createSegments();
-
+public interface CompanyService {
 }

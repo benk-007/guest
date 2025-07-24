@@ -16,12 +16,11 @@ public enum ResourceNotFoundExceptionTitleEnum implements BaseExceptionEnum {
     /**
      * Resource not found exception title: Unit not found.
      */
-    GUEST_NOT_FOUND("GST_RNF_ERR_1"),
-    ID_DOCUMENT_NOT_FOUND("GST_RNF_ERR_2"),
-    IMAGE_NOT_FOUND("GST_RNF_ERR_3"),
-    SEGMENT_NOT_FOUND("CRM_RNF_ERR_4");
-
-
+    PARTY_NOT_FOUND("CRM_RNF_ERR_1"),
+    GUEST_NOT_FOUND("GST_RNF_ERR_2"),
+    ID_DOCUMENT_NOT_FOUND("GST_RNF_ERR_3"),
+    IMAGE_NOT_FOUND("GST_RNF_ERR_4"),
+    SEGMENT_NOT_FOUND("CRM_RNF_ERR_5");
 
 
     private final String code;

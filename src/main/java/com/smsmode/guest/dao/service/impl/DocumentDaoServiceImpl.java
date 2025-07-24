@@ -1,7 +1,3 @@
-/**
- * <p>Copyright (C) Calade Technologies, Inc - All Rights Reserved Unauthorized copying of this
- * file, via any medium is strictly prohibited Proprietary and confidential
- */
 package com.smsmode.guest.dao.service.impl;
 
 import com.smsmode.guest.dao.repository.DocumentRepository;
@@ -17,10 +13,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 /**
- * TODO: add your documentation
+ * Implementation of IdentificationDocumentDaoService.
  *
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
- * <p>Created 19 May 2025</p>
+ * <p>Created 16 Jun 2025</p>
  */
 @Slf4j
 @Service
@@ -30,18 +26,19 @@ public class DocumentDaoServiceImpl implements DocumentDaoService {
     private final DocumentRepository documentRepository;
 
     @Override
-    public boolean existsBy(Specification<DocumentModel> specification) {
-        return documentRepository.exists(specification);
+    public DocumentModel save(DocumentModel idDocument) {
+        return documentRepository.save(idDocument);
     }
 
     @Override
-    public DocumentModel save(DocumentModel image) {
-        return documentRepository.save(image);
-    }
-
-    @Override
-    public void deleteBy(Specification<DocumentModel> specification) {
-        documentRepository.delete(specification);
+    public DocumentModel findOneBy(Specification<DocumentModel> specification) {
+        return documentRepository.findOne(specification).orElseThrow(
+                () -> {
+                    log.debug("Couldn't find any identification document with the specified criteria");
+                    return new ResourceNotFoundException(
+                            ResourceNotFoundExceptionTitleEnum.ID_DOCUMENT_NOT_FOUND,
+                            "No identification document found with the specified criteria");
+                });
     }
 
     @Override
@@ -50,13 +47,17 @@ public class DocumentDaoServiceImpl implements DocumentDaoService {
     }
 
     @Override
-    public DocumentModel findOneBy(Specification<DocumentModel> specification) {
-        return documentRepository.findOne(specification).orElseThrow(
-                () -> {
-                    log.debug("Couldn't find any image with the specified criteria");
-                    return new ResourceNotFoundException(
-                            ResourceNotFoundExceptionTitleEnum.IMAGE_NOT_FOUND,
-                            "No image found with the specified criteria");
-                });
+    public boolean existsBy(Specification<DocumentModel> specification) {
+        return documentRepository.exists(specification);
+    }
+
+    @Override
+    public void deleteBy(Specification<DocumentModel> specification) {
+        documentRepository.delete(specification);
+    }
+
+    @Override
+    public void delete(DocumentModel idDocument) {
+        documentRepository.delete(idDocument);
     }
 }

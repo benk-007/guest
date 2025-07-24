@@ -1,8 +1,8 @@
 package com.smsmode.guest.service;
 
-import com.smsmode.guest.resource.guest.GuestItemGetResource;
+import com.smsmode.guest.resource.guest.PartyItemGetResource;
 import com.smsmode.guest.resource.guest.GuestPatchResource;
-import com.smsmode.guest.resource.guest.GuestPostResource;
+import com.smsmode.guest.resource.guest.PartyPostResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -15,30 +15,30 @@ import org.springframework.web.multipart.MultipartFile;
  * @author hamzahabchi (contact: hamza.habchi@messaging-technologies.com)
  * <p>Created 16 Jun 2025</p>
  */
-public interface GuestService {
+public interface PartyService {
 
     /**
      * Creates a new guest.
      */
-    ResponseEntity<GuestItemGetResource> create(GuestPostResource guestPostResource, MultipartFile identityDocumentFile);
+    ResponseEntity<PartyItemGetResource> create(PartyPostResource partyPostResource, MultipartFile identityDocumentFile);
+
     /**
      * Retrieves all guests with pagination and optional search.
      */
-    ResponseEntity<Page<GuestItemGetResource>> retrieveAllByPage(String search, Pageable pageable);
+    ResponseEntity<Page<PartyItemGetResource>> retrieveAllByPage(String search, Pageable pageable);
 
     /**
      * Retrieves a guest by ID.
      */
-    ResponseEntity<GuestItemGetResource> retrieveById(String guestId);
+    ResponseEntity<PartyItemGetResource> retrieveById(String guestId);
 
     /**
      * Updates a guest partially.
      */
-    ResponseEntity<GuestItemGetResource> updateById(String guestId, GuestPatchResource guestPatchResource);
+    ResponseEntity<PartyItemGetResource> updateById(String guestId, GuestPatchResource guestPatchResource);
 
     /**
      * Deletes a guest by ID.
      */
     ResponseEntity<Void> deleteById(String guestId);
-
 }
