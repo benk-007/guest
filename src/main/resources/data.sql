@@ -1,27 +1,27 @@
-INSERT INTO public.segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
+INSERT INTO public.nz_segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
 VALUES (true, '2025-07-23 15:07:36.025333', '2025-07-23 15:07:36.025333', 'SYSTEM',
         'a19b91c4-3235-429d-919d-b7a7061633c9', 'SYSTEM', null, null, 'Agences');
-INSERT INTO public.segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
+INSERT INTO public.nz_segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
 VALUES (true, '2025-07-23 15:07:36.051415', '2025-07-23 15:07:36.051415', 'SYSTEM',
         'e8466d07-bc6f-4243-921f-08380940b33c', 'SYSTEM', 'a19b91c4-3235-429d-919d-b7a7061633c9', null,
         'Offline');
-INSERT INTO public.segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
+INSERT INTO public.nz_segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
 VALUES (true, '2025-07-23 15:07:36.051415', '2025-07-23 15:07:36.051415', 'SYSTEM',
         'e8466d07-bc6f-4243-922f-08380940b33c', 'SYSTEM', 'a19b91c4-3235-429d-919d-b7a7061633c9', null,
         'VIP');
-INSERT INTO public.segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
+INSERT INTO public.nz_segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
 VALUES (true, '2025-07-23 15:07:36.054140', '2025-07-23 15:07:36.054140', 'SYSTEM',
         '8f800a1d-bb5e-4f14-9b98-b709cafbbeab', 'SYSTEM', null, null, 'B2C');
-INSERT INTO public.segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
+INSERT INTO public.nz_segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
 VALUES (true, '2025-07-23 15:07:36.062172', '2025-07-23 15:07:36.062172', 'SYSTEM',
         'be320e06-2259-4f4f-8eda-093765015749', 'SYSTEM', '8f800a1d-bb5e-4f14-9b98-b709cafbbeab', null, 'Reception');
-INSERT INTO public.segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
+INSERT INTO public.nz_segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
 VALUES (true, '2025-07-23 15:07:36.068411', '2025-07-23 15:07:36.068411', 'SYSTEM',
         '204c1301-5b25-400d-8785-8debabcf6f73', 'SYSTEM', '8f800a1d-bb5e-4f14-9b98-b709cafbbeab', null, 'Téléphone');
-INSERT INTO public.segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
+INSERT INTO public.nz_segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
 VALUES (true, '2025-07-23 15:07:36.071211', '2025-07-23 15:07:36.071211', 'SYSTEM',
         'e0583e5d-8239-46b1-b1a1-c6068c23e0ba', 'SYSTEM', '8f800a1d-bb5e-4f14-9b98-b709cafbbeab', null, 'Site Web');
-INSERT INTO public.segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
+INSERT INTO public.nz_segment (enabled, created_at, modified_at, created_by, id, modified_by, parent_id, description, name)
 VALUES (true, '2025-07-23 15:07:36.071211', '2025-07-23 15:07:36.071211', 'SYSTEM',
         'e0583e5d-8239-46b1-b2a1-c6068c23e0ba', 'SYSTEM', '8f800a1d-bb5e-4f14-9b98-b709cafbbeab', null, 'Email');
 
