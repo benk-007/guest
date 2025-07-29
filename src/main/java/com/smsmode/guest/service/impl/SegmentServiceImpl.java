@@ -42,12 +42,16 @@ public class SegmentServiceImpl implements SegmentService {
     private final SegmentDaoService segmentDaoService;
 
     @Override
-    public ResponseEntity<Page<SegmentItemGetResource>> retrieveAllByPage(String search, Boolean withParent, Boolean enabled, Pageable pageable) {
+    public ResponseEntity<Page<SegmentItemGetResource>> retrieveAllByPage(String search, Boolean withParent, Boolean enabled, String parentId, Pageable pageable) {
         log.debug("Building segment specification with search value: {} ...", search);
         Specification<SegmentModel> specification = Specification
                 .where(SegmentSpecification.withNameLike(search))
                 .and(SegmentSpecification.withParent(withParent))
                 .and(SegmentSpecification.withEnabled(enabled));
+
+        if (parentId != null && !parentId.isBlank()) {
+            specification = specification.and(SegmentSpecification.withParentIdEqual(parentId));
+        }
         log.debug("Retrieve page: {} of segment(s) from database ...", pageable.getPageNumber());
         Page<SegmentModel> segmentModelPage = segmentDaoService.findAllBy(specification, pageable);
         log.info("Segments retrieved from database successfully. Returned {} elements.", segmentModelPage.getSize());
