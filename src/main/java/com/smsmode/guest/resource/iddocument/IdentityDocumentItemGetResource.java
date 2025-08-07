@@ -14,4 +14,5 @@ public class IdentityDocumentItemGetResource {
     private LocalDate expirationDate;
     private boolean fileProvided;
     private AuditGetResource audit;
+    private String mediaId;
 }

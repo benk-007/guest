@@ -40,6 +40,7 @@ public abstract class IdentityDocumentMapper {
     /**
      * Maps IdentificationDocumentModel to IdDocumentGetResource for retrieval.
      */
+    @Mapping(source = "media.id", target = "mediaId")
     public abstract IdentityDocumentItemGetResource modelToItemGetResource(DocumentModel documentModel);
 
     /**

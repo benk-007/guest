@@ -12,9 +12,12 @@ import java.time.LocalDate;
  * All fields are optional for partial updates.
  */
 @Data
-public class GuestPatchResource {
+public class PartyPatchResource {
     private String firstName;
     private String lastName;
+
+    private String name;
+    private String segmentId;
 
     @Valid
     private ContactEmbeddable contact;

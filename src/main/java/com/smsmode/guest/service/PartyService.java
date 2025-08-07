@@ -1,7 +1,8 @@
 package com.smsmode.guest.service;
 
+import com.smsmode.guest.enumeration.PartyTypeEnum;
 import com.smsmode.guest.resource.guest.PartyItemGetResource;
-import com.smsmode.guest.resource.guest.GuestPatchResource;
+import com.smsmode.guest.resource.guest.PartyPatchResource;
 import com.smsmode.guest.resource.guest.PartyPostResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,7 +26,7 @@ public interface PartyService {
     /**
      * Retrieves all guests with pagination and optional search.
      */
-    ResponseEntity<Page<PartyItemGetResource>> retrieveAllByPage(String search, Pageable pageable);
+    ResponseEntity<Page<PartyItemGetResource>> retrieveAllByPage(String search, PartyTypeEnum type, Pageable pageable);
 
     /**
      * Retrieves a guest by ID.
@@ -35,7 +36,7 @@ public interface PartyService {
     /**
      * Updates a guest partially.
      */
-    ResponseEntity<PartyItemGetResource> updateById(String guestId, GuestPatchResource guestPatchResource);
+    ResponseEntity<PartyItemGetResource> updateById(String partyId, PartyPatchResource partyPatchResource);
 
     /**
      * Deletes a guest by ID.

@@ -1,6 +1,7 @@
 package com.smsmode.guest.dao.specification;
 
 import com.smsmode.guest.embeddable.ContactEmbeddable_;
+import com.smsmode.guest.enumeration.PartyTypeEnum;
 import com.smsmode.guest.model.PartyModel;
 import com.smsmode.guest.model.PartyModel_;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,5 +36,12 @@ public class PartySpecification {
                         "%" + email.toLowerCase() + "%"
                 );
     }
+
+    public static Specification<PartyModel> withTypeEqual(PartyTypeEnum type) {
+        return (root, query, criteriaBuilder) ->
+                ObjectUtils.isEmpty(type) ? criteriaBuilder.conjunction() :
+                        criteriaBuilder.equal(root.get(PartyModel_.type), type);
+    }
+
 
 }

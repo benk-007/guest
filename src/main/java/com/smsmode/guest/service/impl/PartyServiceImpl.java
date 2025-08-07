@@ -16,8 +16,8 @@ import com.smsmode.guest.mapper.PartyMapper;
 import com.smsmode.guest.model.DocumentModel;
 import com.smsmode.guest.model.PartyModel;
 import com.smsmode.guest.model.SegmentModel;
-import com.smsmode.guest.resource.guest.GuestPatchResource;
 import com.smsmode.guest.resource.guest.PartyItemGetResource;
+import com.smsmode.guest.resource.guest.PartyPatchResource;
 import com.smsmode.guest.resource.guest.PartyPostResource;
 import com.smsmode.guest.service.IdentityDocumentService;
 import com.smsmode.guest.service.PartyService;
@@ -66,14 +66,24 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
-    public ResponseEntity<Page<PartyItemGetResource>> retrieveAllByPage(String search, Pageable pageable) {
-        Specification<PartyModel> specification = PartySpecification.withFirstNameLike(search)
-                .or(PartySpecification.withLastNameLike(search))
-                .or(PartySpecification.withEmailLike(search));
+    public ResponseEntity<Page<PartyItemGetResource>> retrieveAllByPage(String search, PartyTypeEnum type, Pageable pageable) {
+        Specification<PartyModel> specification = Specification.where(null);
+
+        if (search != null && !search.isBlank()) {
+            specification = specification.and(
+                    PartySpecification.withFirstNameLike(search)
+                            .or(PartySpecification.withLastNameLike(search))
+                            .or(PartySpecification.withEmailLike(search))
+            );
+        }
+
+        if (type != null) {
+            specification = specification.and(PartySpecification.withTypeEqual(type));
+        }
+
         Page<PartyModel> parties = partyDaoService.findAllBy(specification, pageable);
         return ResponseEntity.ok(parties.map(partyMapper::modelToItemGetResource));
     }
-
 
     @Override
     public ResponseEntity<PartyItemGetResource> retrieveById(String guestId) {
@@ -82,19 +92,16 @@ public class PartyServiceImpl implements PartyService {
     }
 
     @Override
-    public ResponseEntity<PartyItemGetResource> updateById(String guestId, GuestPatchResource guestPatchResource) {
+    public ResponseEntity<PartyItemGetResource> updateById(String partyId, PartyPatchResource partyPatchResource) {
+        PartyModel existingParty = partyDaoService.findOneBy(PartySpecification.withIdEqual(partyId));
 
-        // 1. Récupérer le guest existant
-        PartyModel existingParty = partyDaoService.findOneBy(PartySpecification.withIdEqual(guestId));
+        PartyModel updatedParty = partyMapper.patchResourceToModel(partyPatchResource, existingParty);
 
-        // 2. Appliquer les modifications partielles
-        PartyModel updatedParty = partyMapper.patchResourceToModel(guestPatchResource, existingParty);
-
-        // 3. Sauvegarder les modifications
         updatedParty = partyDaoService.save(updatedParty);
 
         return ResponseEntity.ok(partyMapper.modelToItemGetResource(updatedParty));
     }
+
 
     @Override
     @Transactional

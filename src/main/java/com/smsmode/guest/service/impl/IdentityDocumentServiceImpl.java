@@ -116,8 +116,21 @@ public class IdentityDocumentServiceImpl implements IdentityDocumentService {
         Specification<DocumentModel> spec = Specification.where(
                 DocumentSpecification.withId(documentId));
         DocumentModel existingIdDocument = documentDaoService.findOneBy(spec);
+
+        if (documentImage != null && !documentImage.isEmpty()) {
+            if (existingIdDocument.getMedia() != null) {
+                try {
+                    mediaFeignService.deleteMediaById(existingIdDocument.getMedia().getId());
+                    log.info("Old document image deleted for ID {}", existingIdDocument.getId());
+                } catch (Exception e) {
+                    log.warn("Failed to delete old media for document {}. Proceeding with update.", existingIdDocument.getId(), e);
+                }
+            }
+        }
+
         DocumentModel updatedIdDocument = identityDocumentMapper.patchResourceToModel(idDocumentPatchResource, existingIdDocument);
         updatedIdDocument = this.create(updatedIdDocument.getParty(), updatedIdDocument, documentImage);
+
         return ResponseEntity.ok(identityDocumentMapper.modelToItemGetResource(updatedIdDocument));
     }
 

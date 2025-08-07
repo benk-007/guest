@@ -1,8 +1,10 @@
 package com.smsmode.guest.controller.impl;
 
 import com.smsmode.guest.controller.PartyController;
+import com.smsmode.guest.enumeration.PartyTypeEnum;
 import com.smsmode.guest.resource.guest.PartyItemGetResource;
-import com.smsmode.guest.resource.guest.GuestPatchResource;
+
+import com.smsmode.guest.resource.guest.PartyPatchResource;
 import com.smsmode.guest.resource.guest.PartyPostResource;
 import com.smsmode.guest.service.PartyService;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +32,8 @@ public class PartyControllerImpl implements PartyController {
     }
 
     @Override
-    public ResponseEntity<Page<PartyItemGetResource>> getAllByPage(String search, Pageable pageable) {
-        return partyService.retrieveAllByPage(search, pageable);
+    public ResponseEntity<Page<PartyItemGetResource>> getAllByPage(String search, PartyTypeEnum type, Pageable pageable) {
+        return partyService.retrieveAllByPage(search, type, pageable);
     }
 
     @Override
@@ -40,8 +42,8 @@ public class PartyControllerImpl implements PartyController {
     }
 
     @Override
-    public ResponseEntity<PartyItemGetResource> patchById(String guestId, GuestPatchResource guestPatchResource) {
-        return partyService.updateById(guestId, guestPatchResource);
+    public ResponseEntity<PartyItemGetResource> patchById(String partyId, PartyPatchResource partyPatchResource) {
+        return partyService.updateById(partyId, partyPatchResource);
     }
 
     @Override

@@ -1,7 +1,8 @@
 package com.smsmode.guest.controller;
 
+import com.smsmode.guest.enumeration.PartyTypeEnum;
 import com.smsmode.guest.resource.guest.PartyItemGetResource;
-import com.smsmode.guest.resource.guest.GuestPatchResource;
+import com.smsmode.guest.resource.guest.PartyPatchResource;
 import com.smsmode.guest.resource.guest.PartyPostResource;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ public interface PartyController {
     @GetMapping
     ResponseEntity<Page<PartyItemGetResource>> getAllByPage(
             @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "type", required = false) PartyTypeEnum type,
             Pageable pageable);
 
 
@@ -47,10 +49,10 @@ public interface PartyController {
      * Updates a guest partially.
      */
 
-    @PatchMapping("/{guestId}")
+    @PatchMapping("/{partyId}")
     ResponseEntity<PartyItemGetResource> patchById(
-            @PathVariable("guestId") String guestId,
-            @RequestBody @Valid GuestPatchResource guestPatchResource);
+            @PathVariable("partyId") String partyId,
+            @RequestBody @Valid PartyPatchResource partyPatchResource);
 
     /**
      * Deletes a guest.
